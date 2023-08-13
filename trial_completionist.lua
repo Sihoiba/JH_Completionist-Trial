@@ -1,5 +1,5 @@
-nova.require "trial_gfx"
-nova.require "trial_data"
+nova.require "trial_gfx/entities_gfx.lua"
+nova.require "trial_data/entities.lua"
 
 register_blueprint "trial_completionist"
 {

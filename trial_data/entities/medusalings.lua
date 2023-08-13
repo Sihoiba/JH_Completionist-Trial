@@ -72,7 +72,7 @@ register_blueprint "medusaling_jaws"
 	}
 }
 
-register_blueprint "medusa"
+register_blueprint "medusaling"
 {
 	blueprint = "medusaling_base",
 	lists = {
