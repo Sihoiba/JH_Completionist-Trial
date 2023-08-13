@@ -72,8 +72,6 @@ register_blueprint "medusaling_jaws"
 	}
 }
 
-
-
 register_blueprint "medusaling_curse"
 {
 	flags = { EF_NOPICKUP, EF_PERMANENT }, 

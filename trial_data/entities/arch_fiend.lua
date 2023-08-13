@@ -27,7 +27,7 @@ register_blueprint "arch_fiend"
 	blueprint = "fiend_base",
 	lists = {
 		group = "being",
-		{ 2, keywords = { "enemy_test", "demon", "demon1" }, weight = 100, dmax = 24, },
+		{ 2, keywords = { "demon", "demon1" }, weight = 100, dmax = 24, },
 	},
 	text = {
 		name      = "arch fiend",

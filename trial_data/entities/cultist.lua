@@ -35,7 +35,7 @@ register_blueprint "cultist"
 	blueprint = "zombie",
 	lists = {
 		group = "being",
-		{ 1, keywords = { "enemy_test", "former", "former1", "civilian" },          weight = 100, dmax = 24, },
+		{ 1, keywords = { "former", "former1", "civilian" },          weight = 100, dmax = 24, },
 	},
 	text  = {
 		name  = "cultist",
