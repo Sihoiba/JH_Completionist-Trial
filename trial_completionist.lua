@@ -66,11 +66,11 @@ register_blueprint "level_callisto_enemy_test"
                         -- EASY:
                         { "medusaling", "medusaling", "medusaling", "medusaling", "medusaling", "medusaling" },
                         -- MEDIUM:
-                        { "medusaling", "medusaling", "archmedusaling", "arch_fiend", "arch_fiend", "archmedusaling" },
+                        { "wither_watcher", "wither_watcher", "wither_watcher", "wither_watcher", "wither_watcher", "medusaling" },
                         -- HARD:
-                        { "medusaling", "medusaling", "arch_fiend", "arch_fiend", "archmedusaling", "archmedusaling" },
+                        { "medusaling", "medusaling", "wither_watcher", "arch_fiend", "archmedusaling", "archmedusaling" },
                         -- UV, N!
-                        { "medusaling", "medusaling", "arch_fiend", "arch_fiend", "archmedusaling", "archmedusaling" },
+                        { "medusaling", "medusaling", "wither_watcher", "arch_fiend", "archmedusaling", "archmedusaling" },
 						}
                     local list        = enemies[ math.min( DIFFICULTY + 1, #enemies )]  
                     local entry_coord = self:find_coord( "floor_entrance" ) or ivec2(1,1)

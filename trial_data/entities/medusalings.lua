@@ -145,7 +145,7 @@ register_blueprint "medusaling"
 	blueprint = "medusaling_base",
 	lists = {
 		group = "being",
-		{    keywords = { "enemy_test", "demon", "demon2" }, weight = 100, dmax = 24, },		
+		{    5,  keywords = { "enemy_test", "demon", "demon2" }, weight = 100, dmax = 24, },		
 	},
 	text = {
 		name      = "medusaling",
@@ -166,7 +166,7 @@ register_blueprint "archmedusaling"
 	blueprint = "medusaling_base",
 	lists = {
 		group = "being",
-		{    keywords = { "enemy_test", "demon", "demon2" }, weight = 100, dmax = 24, },		
+		{  4,  keywords = {  "enemy_test", "demon", "demon2" }, weight = 100, dmax = 24, },		
 	},
 	text = {
 		name      = "archmedusaling",
