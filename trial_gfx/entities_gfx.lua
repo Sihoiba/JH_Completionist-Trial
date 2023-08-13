@@ -1,0 +1,1 @@
+nova.require "entities/medualings.lua"

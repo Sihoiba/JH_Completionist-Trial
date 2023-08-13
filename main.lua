@@ -1,0 +1,1 @@
+nova.require "trial_completionist.lua"
