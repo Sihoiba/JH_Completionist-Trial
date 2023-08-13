@@ -1,1 +1,2 @@
-nova.require "trial_completionist.lua"
+nova.require "trial_completionist"
+nova.require "trial_data/entities"

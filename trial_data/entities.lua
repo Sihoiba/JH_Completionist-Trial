@@ -1,1 +1,1 @@
-nova.require "trial_data/entities/medusalings.lua"
+nova.require "trial_data/entities/medusalings"

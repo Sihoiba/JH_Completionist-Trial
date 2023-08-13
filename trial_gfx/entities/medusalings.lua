@@ -1,5 +1,3 @@
-nova.require "data/lua/gfx/common"
-
 register_gfx_blueprint "medusaling"
 {
 	blueprint = "medusa_base_flesh",

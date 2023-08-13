@@ -1,1 +1,1 @@
-nova.require "trial_gfx/entities/medusalings.lua"
+nova.require "trial_gfx/entities/medusalings"

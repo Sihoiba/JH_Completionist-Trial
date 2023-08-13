@@ -1,6 +1,3 @@
-nova.require "trial_gfx/entities_gfx.lua"
-nova.require "trial_data/entities.lua"
-
 register_blueprint "trial_completionist"
 {
     text = {
@@ -24,6 +21,112 @@ register_blueprint "trial_completionist"
     },
 }
 
+register_blueprint "level_callisto_enemy_test"
+{
+    blueprint   = "level_base",
+	text        = {
+        name        = "CALLISTO L1",
+        on_enter    = "You come back from a routine patrol of the Callisto orbit. Your landing craft gets shot down by the automated defense systems. Something is wrong...",
+    },
+    environment = {
+        music        = "music_callisto_01",
+    },
+    attributes = {
+        xp_check = 0,
+    },
+    callbacks = {
+        on_create = [[
+            function ( self )
+
+                local generate = function( self, params )
+                    local tiles  = { callisto_intro_13x13, callisto_intro_13x13, callisto_intro_11x13, callisto_intro_13x13_2, callisto_intro_9x7 }
+                    local set    = tiles[ math.random(#tiles) ]
+                    self:resize( set.map_size )
+                    self:set_styles{ "ts06_F:ext", "ts06_F:hangar", "ts06_F", "ts06_F:pipes",  }
+            
+                    local result  = generator.archibald( self, set )
+                    local rewards = {
+                        { "lootbox_medical", "lootbox_ammo", "lootbox_general" },
+                        { "lootbox_medical", "lootbox_ammo", "lootbox_general" },
+                        { "lootbox_medical", "lootbox_ammo" },
+                        { "lootbox_medical", "lootbox_ammo" },
+                        { "lootbox_medical", "lootbox_ammo", "lootbox_armor" },
+                    }
+                    local list = rewards[ math.min( DIFFICULTY + 1, #rewards )]  
+                    generator.drop_marker_rewards( self, "mark_special", larea, list )
+                    result.no_elevator_check = true
+                    for c in self:get_area():edges() do
+                        self:set_cell_flag( c, EF_NOSPAWN, true )
+                    end
+                    return result
+                end
+            
+                local spawn = function( self )
+                    local enemies = {
+                        -- EASY:
+                        { "medusaling", "medusaling", "medusaling", "medusaling", "medusaling", "medusaling" },
+                        -- MEDIUM:
+                        { "medusaling", "medusaling", "medusaling", "medusaling", "medusaling", "medusaling" },
+                        -- HARD:
+                        { "medusaling", "medusaling", "medusaling", "medusaling", "medusaling", "medusaling" },
+                        -- UV, N!
+                        { "medusaling", "medusaling", "medusaling", "medusaling", "medusaling", "medusaling" },
+						}
+                    local list        = enemies[ math.min( DIFFICULTY + 1, #enemies )]  
+                    local entry_coord = self:find_coord( "floor_entrance" ) or ivec2(1,1)
+            
+                    for _,v in ipairs( list ) do
+                        local p = generator.random_safe_spawn_coord( self, self:get_area():shrinked(4), entry_coord, 7 )
+                        local result = generator.spawn( self, v, p )
+                    end
+                end
+
+                generator.run( self, nil, generate, spawn )
+                self.environment.lut = math.random_pick( luts.standard )
+            end
+            ]],
+        on_enter_level = [[
+            function ( self, player, reenter )
+                if reenter then return end
+                local vo = "vo_callisto"
+                if DIFFICULTY > 1 and math.random(10) == 1 then
+                    if math.random(10) == 1 then
+                        vo = "vo_callisto_rare"
+                    else
+                        vo = "vo_callisto_cool"
+                    end
+                end
+                ui:alert {
+                    title   = "",
+                    teletype = 0,
+                    content = self.text.on_enter,
+                    size    = ivec2( 34, 10 ),
+                }
+                world:play_voice( vo )
+            end
+        ]],
+        on_kill = [[
+            function ( self, killed, killer, all )
+                if self.attributes.xp_check == 1 then
+                    local expected = { 200, 220, 300, 400 }
+                    local min_xp   = expected[math.min( DIFFICULTY + 1, #expected )]
+                    local player   = world:get_player()
+                    if player.progression and player.progression.experience < min_xp then
+                        local bonus = min_xp - player.progression.experience
+                        world:add_experience( player, bonus )
+                    end
+                    self.attributes.xp_check = 0
+                end
+            end
+        ]],
+        on_cleared = [[
+            function ( self )
+                self.attributes.xp_check = 1
+            end
+        ]],
+    }
+}
+
 register_world "trial_completionist"
 {
 	on_create = function( seed )
@@ -31,7 +134,7 @@ register_world "trial_completionist"
 		data.cot = {}
 		world.add_branch {
 			name       = "CALLISTO",
-			depth      = 1,
+			depth      = 2,
 			episode    = 1,
 			size       = 1,
 			enemy_list = "enemy_test",
@@ -73,7 +176,7 @@ register_world "trial_completionist"
 				music = "music_callisto_intermission",
 			},
 		}
-		data.level[1].blueprint = "level_callisto_intro"
+		data.level[1].blueprint = "level_callisto_enemy_test"
 				
 		for _,linfo in ipairs( data.level ) do
 			linfo.lootbox_count = linfo.lootbox_count or 0

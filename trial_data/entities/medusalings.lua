@@ -22,7 +22,7 @@ register_blueprint "medusaling_base"
 		health           = 10,
 		resist = {
 			ignite = 100,
-			melee = 50
+			melee = 50,
 		},
 	},
 	callbacks = {
