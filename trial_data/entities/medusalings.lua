@@ -17,7 +17,7 @@ register_blueprint "medusaling_base"
 		color     = LIGHTRED,
 	},
 	attributes = {
-		speed = 1.3
+		speed = 1.3,
 		experience_value = 10,
 		health           = 10,
 		resist = {
@@ -77,7 +77,7 @@ register_blueprint "medusaling"
 	blueprint = "medusaling_base",
 	lists = {
 		group = "being",
-		{    keywords = { "enemy_test", "demon", "demon2" }, weight = 100, dmin = 1, dmax = 24, },		
+		{    keywords = { "enemy_test", "demon", "demon2" }, weight = 100, dmax = 24, },		
 	},
 	text = {
 		name      = "medusaling",
