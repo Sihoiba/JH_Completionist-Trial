@@ -14,7 +14,7 @@ register_blueprint "trial_completionist"
     callbacks = {
         on_create_player = [[
             function( self, player )                
-				player:attach( "shotgun" )
+				player:attach( "dshotgun" )
                 player:attach( "ammo_shells", { stack = { amount = 30 } } )		
             end
         ]],
@@ -66,11 +66,11 @@ register_blueprint "level_callisto_enemy_test"
                         -- EASY:
                         { "medusaling", "medusaling", "medusaling", "medusaling", "medusaling", "medusaling" },
                         -- MEDIUM:
-                        { "medusaling", "medusaling", "medusaling", "medusaling", "medusaling", "archmedusaling" },
+                        { "medusaling", "medusaling", "archmedusaling", "arch_fiend", "arch_fiend", "archmedusaling" },
                         -- HARD:
-                        { "medusaling", "medusaling", "medusaling", "archmedusaling", "archmedusaling", "archmedusaling" },
+                        { "medusaling", "medusaling", "arch_fiend", "arch_fiend", "archmedusaling", "archmedusaling" },
                         -- UV, N!
-                        { "medusaling", "medusaling", "archmedusaling", "archmedusaling", "archmedusaling", "archmedusaling" },
+                        { "medusaling", "medusaling", "arch_fiend", "arch_fiend", "archmedusaling", "archmedusaling" },
 						}
                     local list        = enemies[ math.min( DIFFICULTY + 1, #enemies )]  
                     local entry_coord = self:find_coord( "floor_entrance" ) or ivec2(1,1)
