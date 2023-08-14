@@ -16,7 +16,8 @@ register_blueprint "printed_drone"
 	callbacks = {
 		on_create = [=[
 		function( self )
-			self:attach( "drone_weapon_1" )			
+			self:attach( "drone_weapon_1" )		
+			self:attach( "ammo_9mm", { stack = { amount = 1 + math.random(1) } } )		
 			local hack    = self:attach( "terminal_bot_hack" )
 			hack.attributes.tool_cost = 3
 			local disable = self:attach( "terminal_bot_disable" )
@@ -63,6 +64,7 @@ register_blueprint "printed_combat_drone"
 		on_create = [=[
 		function( self )
 			self:attach( "drone_weapon_2" )
+			self:attach( "ammo_9mm", { stack = { amount = 2 + math.random(1) } } )
 			local hack    = self:attach( "terminal_bot_hack" )
 			hack.attributes.tool_cost = 4
 			local disable = self:attach( "terminal_bot_disable" )
@@ -108,7 +110,8 @@ register_blueprint "printed_military_drone"
 	callbacks = {
 		on_create = [=[
 		function( self )
-			self:attach( "drone_weapon_3" )			
+			self:attach( "drone_weapon_3" )	
+			self:attach( "ammo_762", { stack = { amount = 2 + math.random(1) } } )			
 			local hack    = self:attach( "terminal_bot_hack" )
 			hack.attributes.tool_cost = 5
 			local disable = self:attach( "terminal_bot_disable" )
@@ -305,6 +308,7 @@ register_blueprint "combat_drone_printer"
 				disable.attributes.tool_cost = 5
 				self:attach( "terminal_return" )
 				self:attach( "sentry_bot_chaingun" )
+				self:attach( "ammo_762", { stack = { amount = 5 + math.random(5) } } )
 			end
 			]=],		 
         on_load = [=[
@@ -408,6 +412,7 @@ register_blueprint "military_drone_printer"
 				disable.attributes.tool_cost = 5
 				self:attach( "terminal_return" )
 				self:attach( "tank_mech_auto" )
+				self:attach( "ammo_762", { stack = { amount = 10 + math.random(5) } } )
 			end
 			]=],		 
         on_load = [=[
