@@ -10,6 +10,9 @@ register_blueprint "printed_drone"
 		namep     = "security drones",
 		entry     = "Drone",
 	},
+	data = {
+		parent = nil,
+	},
 	callbacks = {
 		on_create = [=[
 		function( self )
@@ -26,15 +29,14 @@ register_blueprint "printed_drone"
 				if weapon and weapon.weapon and weapon.weapon.type == world:hash("melee") then return end
 				world:play_sound( "explosion", self, 0.3 )
 				ui:spawn_fx( nil, "fx_drone_explode", nil, world:get_position( self ) )
-				self.attributes.parent.attributes.print_count = self.attributes.parent.attributes.print_count - 1
+				self.data.parent.data.print_count = self.data.parent.data.print_count - 1
 			end
 		]=],
 	},
 	attributes = {
 		experience_value = 0,
 		accuracy = -10,
-		health   = 10,
-		parent = nil,
+		health   = 10,		
 	},
 }
 
@@ -42,7 +44,7 @@ register_blueprint "drone_printer_self_destruct"
 {
 	attributes = {
 		damage    = 30,
-		explosion = 3,
+		explosion = 2,
 	},
 	weapon = {
 		group = "env",
@@ -60,7 +62,7 @@ register_blueprint "drone_printer"
 	blueprint = "bot",
 	lists = {
 		group = "being",
-		{  4,  keywords = {  "enemy_test", "bot", "robotic", "civilian" }, weight = 100, dmax = 24, },		
+		{  keywords = {  "enemy_test", "bot", "robotic", "civilian" }, weight = 100, dmax = 24, },		
 	},
 	flags = { EF_NOMOVE, EF_NOFLY, EF_TARGETABLE, EF_ALIVE, },
     text = {
@@ -83,7 +85,11 @@ register_blueprint "drone_printer"
 			group     = "security",
 			state     = "idle",
             range     = 6,            
-		},        
+		},
+		print_id = "printed_drone",
+		print_count = 0,
+		print_max = 10,
+		print_delay = 0;
 	},
     attributes = {
 		evasion = -20,
@@ -93,9 +99,6 @@ register_blueprint "drone_printer"
 		resist = {
 			emp = 25,
 		},
-		print_id = "printed_drone",
-		print_count = 0,
-		print_max = 10,
 	},
     state = "open",
     inventory = {},
@@ -117,14 +120,19 @@ register_blueprint "drone_printer"
 		on_action   = [=[
             function( self )
                 aitk.standard_ai( self )
-				if self.attributes.print_count < self.attributes.print_max then
+				if self.data.print_count < self.data.print_max then
+					if self.data.print_delay < 3 then
+						self.data.print_delay = self.data.print_delay + 1
+						return
+					end
+					self.data.print_delay = 0
 					world:play_sound( "armor_shard", self )
 					local ar = area.around(world:get_position( self ), 1 )
 					ar:clamp( world:get_level():get_area() )
 					local c = generator.random_safe_spawn_coord( world:get_level(), ar, world:get_position( self ), 1 )
-					local s = world:get_level():add_entity("printed_drone", c, nil )
-					s.attributes.parent = self
-					self.attributes.print_count = self.attributes.print_count + 1
+					local s = world:get_level():add_entity(self.data.print_id, c, nil )
+					s.data.parent = self					
+					self.data.print_count = self.data.print_count + 1
 				end											
             end
         ]=],

@@ -29,12 +29,18 @@ register_gfx_blueprint "drone_printer"
     },
     {
         scene = {},
+		scale = {
+			scale = 0.5
+		},
         render = {
             mesh        = "data/model/tank_mech_01.nmd:tank_mech_body_01",
             material    = "data/texture/tank_mech_01/A/tank_mech_body_01",
         },	
         {
             scene = {},
+			scale = {
+				scale = 0.5
+			},
             render = {
                 mesh        = "data/model/tank_mech_01.nmd:tank_mech_body_01#01",
                 material    = "data/texture/tank_mech_01/A/tank_mech_head_01",
@@ -42,6 +48,9 @@ register_gfx_blueprint "drone_printer"
         },
         {
             scene = {},
+			scale = {
+				scale = 0.5
+			},
             render = {
                 mesh        = "data/model/tank_mech_01.nmd:tank_mech_body_01#02",
                 material    = "data/texture/tank_mech_01/A/tank_mech_legs_01",
