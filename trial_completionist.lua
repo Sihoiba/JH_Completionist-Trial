@@ -66,7 +66,7 @@ register_blueprint "level_callisto_enemy_test"
                         -- EASY:
                         { "medusaling", "medusaling", "medusaling", "medusaling", "medusaling", "medusaling" },
                         -- MEDIUM:
-                        { "cultist", "arch_fiend", "wither_watcher", "wither_watcher", "archmedusaling", "medusaling" },
+                        { "cultist", "arch_fiend", "wither_watcher", "wither_watcher", "military_drone_printer", "combat_drone_printer" },
                         -- HARD:
                         { "medusaling", "medusaling", "wither_watcher", "arch_fiend", "archmedusaling", "archmedusaling" },
                         -- UV, N!
