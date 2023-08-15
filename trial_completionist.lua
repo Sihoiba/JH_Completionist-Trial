@@ -14,8 +14,8 @@ register_blueprint "trial_completionist"
     callbacks = {
         on_create_player = [[
             function( self, player )                
-				player:attach( "dshotgun" )
-                player:attach( "ammo_shells", { stack = { amount = 30 } } )		
+				player:attach( "exo_sshotgun" )
+                player:attach( "ammo_shells", { stack = { amount = 60 } } )		
             end
         ]],
     },
