@@ -3,7 +3,7 @@ register_blueprint "human_paladin_machete"
 	blueprint = "zombie",
 	lists = {
 		group    = "being",
-		{ keywords = { "enemy_test",  "former", "former2", "civilian" }, weight = 100, dmax = 24, },
+		{ keywords = { "former", "former2", "civilian" }, weight = 100, dmax = 24, },
 	},
 	text = {
 		name      = "corrupted paladin",
@@ -42,7 +42,7 @@ register_blueprint "human_paladin_sword"
 	blueprint = "zombie",
 	lists = {
 		group    = "being",
-		{ keywords = { "enemy_test",  "former", "former4", "civilian" }, weight = 100, dmax = 24, },
+		{ keywords = { "former", "former4", "civilian" }, weight = 100, dmax = 24, },
 	},
 	text = {
 		name      = "former CRI paladin",
@@ -82,7 +82,7 @@ register_blueprint "human_paladin_chainsaw"
 	blueprint = "zombie",
 	lists = {
 		group    = "being",
-		{ keywords = { "enemy_test",  "former", "former3", "civilian" }, weight = 100, dmax = 24, },
+		{ keywords = { "former", "former3", "civilian" }, weight = 100, dmax = 24, },
 	},
 	text = {
 		name      = "hellish paladin",
