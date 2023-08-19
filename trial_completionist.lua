@@ -1,44 +1,38 @@
-nova.require "data/lua/core/world"
-nova.require "data/lua/jh/data/difficulty"
-nova.require "data/lua/jh/data/generators/callisto"
-nova.require "data/lua/jh/data/generators/europa"
-nova.require "data/lua/jh/data/generators/io"
-nova.require "data/lua/jh/data/generators/beyond"
-nova.require "data/lua/jh/data/generators/dante"
-nova.require "data/lua/jh/data/levels/callisto_intro"
-nova.require "data/lua/jh/data/levels/callisto_hub"
-nova.require "data/lua/jh/data/levels/callisto/valhalla/valhalla_command"
-nova.require "data/lua/jh/data/levels/callisto/mines/mines_anomaly"
-nova.require "data/lua/jh/data/levels/callisto/mimir/mimir_central"
-nova.require "data/lua/jh/data/levels/callisto/rift/rift_crevice"
-nova.require "data/lua/jh/data/levels/callisto_military"
-nova.require "data/lua/jh/data/levels/callisto_docks"
-nova.require "data/lua/jh/data/levels/callisto_spaceport"
-nova.require "data/lua/jh/data/levels/europa/europa_intro"
-nova.require "data/lua/jh/data/levels/europa/europa_pit"
-nova.require "data/lua/jh/data/levels/europa/europa_refueling"
-nova.require "data/lua/jh/data/levels/europa/conamara/conamara_containment"
-nova.require "data/lua/jh/data/levels/europa_central_dig"
-nova.require "data/lua/jh/data/levels/europa/ruins/ruins_temple"
-nova.require "data/lua/jh/data/levels/europa/asterius/asterius_breach"
-nova.require "data/lua/jh/data/levels/europa/dig_zone/dig_zone_tyre"
-nova.require "data/lua/jh/data/levels/io/mephitic/mephitic_hollow"
-nova.require "data/lua/jh/data/levels/io/blacksite/blacksite_vaults"
-nova.require "data/lua/jh/data/levels/io/cri_labs/cri_labs_armory"
-nova.require "data/lua/jh/data/levels/io/halls/halls_cathedral"
-nova.require "data/lua/jh/data/levels/io/io_intro"
-nova.require "data/lua/jh/data/levels/io/io_warehouse"
-nova.require "data/lua/jh/data/levels/io/io_lock"
-nova.require "data/lua/jh/data/levels/io/io_gateway"
-nova.require "data/lua/jh/data/levels/beyond_intro"
-nova.require "data/lua/jh/data/levels/beyond_arena"
-nova.require "data/lua/jh/data/levels/beyond_crucible"
-nova.require "data/lua/jh/data/levels/beyond_limbo"
-nova.require "data/lua/jh/data/levels/beyond_percipice"
-nova.require "data/lua/jh/data/levels/dante_intro"
-nova.require "data/lua/jh/data/levels/dante_percipice"
-nova.require "data/lua/jh/data/levels/dante_inferno"
-nova.require "data/lua/jh/data/levels/dante_altar"
+function killOnSight(self, being, player)
+	if being.data and being.data.ai.group ~= "player" then
+		if being.health.current > 0 then 
+			being.health.current = 1
+			world:get_level():apply_damage( self, being, 100, ivec2(), "pierce", player )
+		end		
+	end
+end
+
+register_blueprint "runtime_murder"
+{
+    callbacks = {       
+        on_timer = [[
+			function ( self, first )
+				if first then return 49 end
+				local level = world:get_level()
+				for t in level:targets( world:get_player(), 8 ) do
+					killOnSight(self, t, world:get_player())
+				end
+				return 50
+			end
+		]],
+		on_action = [=[
+            function ( self, entity, time_passed, last )
+                if time_passed > 0 then
+                    local level = world:get_level()
+					for t in level:targets( world:get_player(), 8 ) do
+						killOnSight(self, t, world:get_player())
+					end
+                end
+                return 0
+            end
+        ]=],
+    },
+}
 
 register_blueprint "trial_completionist"
 {
@@ -56,10 +50,9 @@ register_blueprint "trial_completionist"
     callbacks = {
         on_create_player = [[
             function( self, player ) 
-				player:attach( "exo_sshotgun" )
-                player:attach( "ammo_shells", { stack = { amount = 60 } } )		
+				player:attach( "runtime_murder" )
             end
-        ]],
+        ]],		
     },
 }
 
