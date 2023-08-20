@@ -9,6 +9,7 @@ end
 
 register_blueprint "runtime_murder"
 {
+	flags = { EF_NOPICKUP },
     callbacks = {       
         on_timer = [[
 			function ( self, first )
@@ -65,7 +66,7 @@ register_world "trial_completionist"
 			name       = "CALLISTO",
 			depth      = 1,
 			episode    = 1,
-			size       = 7,
+			size       = 6,
 			enemy_list = "callisto",
 			quest = {
 				list = "callisto",
@@ -136,7 +137,7 @@ register_world "trial_completionist"
 		data.level[6].next      = 10007
 
 		world.add_branch {
-			name           = "Callisto Mines",
+			name           = "CALLISTO MINES",
 			episode        = 2,
 			depth          = 7,
 			size           = 3,
@@ -174,15 +175,13 @@ register_world "trial_completionist"
 				branch_index   = 1,
 				returnable     = true,
 		}
-		data.level[10].blueprint = "level_callisto_spaceport"
-		data.level[10].generator = "callisto_spaceport"		
-		data.level[10].next      = 10011
-
-		local rift_data = {
-			name           = "Callisto Rift",
-			episode        = 1,
-			depth          = 3,
-			size           = 2,
+		data.level[9].next      = 10010
+		
+		world.add_branch {
+			name           = "CALLISTO RIFT",
+			episode        = 3,
+			depth          = 10,
+			size           = 3,
 			enemy_list     = "callisto",
 			enemy_mod      = { bot = 0, drone = 0.5, demon = 2, },
 			blueprint      = "level_callisto_rift",
@@ -204,21 +203,28 @@ register_world "trial_completionist"
 				"event_exalted_summons",
 			},
 			event      = { 100, math.random(3), },
-			special = {
-				generator  = "callisto_crevice",
-				blueprint  = "level_callisto_crevice",
-				ilevel_mod = 2,
-				dlevel_mod = 1,
-				returnable = true,
-			},
-			
+			intermission = {
+				scene = "intermission_callisto",
+				music = "music_callisto_intermission",
+			},		
 		}
-
-		local valhalla_data = {
-			name           = "Valhalla Terminal",
-			episode        = 1,
-			depth          = 4,
-			size           = 2,
+		data.level[12].special = world.add_special{
+				episode        = 3,
+				depth          = 12,
+				generator      = "callisto_crevice",
+				blueprint      = "level_callisto_crevice",
+				ilevel_mod     = 2,
+				dlevel_mod     = 1,
+				branch_index   = 1,
+				returnable     = true,
+		}
+		data.level[12].next      = 10013
+		
+		world.add_branch {
+			name           = "VALHALLA TERMINAL",
+			episode        = 4,
+			depth          = 13,
+			size           = 3,
 			enemy_list     = "callisto",
 			enemy_mod      = { demon2 = 0, civilian = 2, },
 			blueprint      = "level_callisto_valhalla",
@@ -234,27 +240,33 @@ register_world "trial_completionist"
 				{ "lootbox_armor" },
 			},
 			events     = {
-				--{ "event_volatile_storage", 2.0, },
-				--{ "event_lockdown", 2.0, },
 				"event_low_light", 
 				"event_desolation",
 				"event_infestation",
 				"event_hunt",
 			},
 			event      = { 100, math.random(3), },
-			special = {
-				generator  = "callisto_valhalla_command",
-				blueprint  = "level_callisto_command",
-				ilevel_mod = 2,
-				dlevel_mod = 1,
-				returnable = true,
-			},
+			intermission = {
+				scene = "intermission_callisto",
+				music = "music_callisto_intermission",
+			},		
 		}
-
-		local mimir_data = {
-			name           = "Mimir Habitat",
-			episode        = 1,
-			depth          = 4,
+		data.level[15].special = world.add_special{
+				episode        = 3,
+				depth          = 15,
+				generator      = "callisto_valhalla_command",
+				blueprint      = "level_callisto_command",
+				ilevel_mod     = 2,
+				dlevel_mod     = 1,
+				branch_index   = 1,
+				returnable     = true,
+		}
+		data.level[15].next      = 10016
+		
+		world.add_branch {
+			name           = "MIMIR HABITAT",
+			episode        = 5,
+			depth          = 16,
 			size           = 3,
 			enemy_list     = "callisto",
 			enemy_mod      = { demon1 = 0.3, demon2 = 0, },
@@ -271,25 +283,50 @@ register_world "trial_completionist"
 				{ "lootbox_armor" },
 			},
 			events     = {
-				--{ "event_volatile_storage", 2.0, },
 				{ "event_lockdown", 2.0, },
 				"event_low_light",
 				"event_infestation",
 			},
 			event      = { 100, math.random(3), },
-			special = {
+			intermission = {
+				scene = "intermission_callisto",
+				music = "music_callisto_intermission",
+			},		
+		}
+		data.level[18].special = world.add_special{
+				episode        = 3,
+				depth          = 18,
 				generator      = "callisto_calsec_central",
 				blueprint      = "level_callisto_calsec",
 				ilevel_mod     = 2,
 				dlevel_mod     = 1,
+				branch_index   = 1,
 				returnable     = true,
+		}
+		data.level[18].next      = 10019
+		
+		world.add_branch {
+			name       = "CALLISTO",
+			depth      = 19,
+			episode    = 6,
+			size       = 1,
+			enemy_list = "callisto",
+			quest = {
+				list = "callisto",
+			},			
+			intermission = {
+				scene = "intermission_callisto",
+				music = "music_callisto_intermission",
 			},
 		}
+		data.level[19].blueprint = "level_callisto_spaceport"
+		data.level[19].generator = "callisto_spaceport"	
+		data.level[19].next      = 10020		
 
 		world.add_branch {
 			name       = "EUROPA",
-			depth      = 11,
-			episode    = 3,
+			depth      = 20,
+			episode    = 7,
 			size       = 7,
 			enemy_list = "europa",
 			quest = {
@@ -327,20 +364,20 @@ register_world "trial_completionist"
 				music = "music_europa_intermission",
 			},
 		}
-		data.level[11].blueprint = "level_europa_intro"
-		data.level[12].force_terminal = true
-		data.level[14].blueprint = "level_europa_concourse"
-		data.level[15].blueprint = "level_europa_civilian"
-		data.level[16].blueprint = "level_europa_ice"
-		data.level[17].blueprint = "level_europa_central_dig"
-		data.level[17].generator = "europa_central_dig"
-		data.level[17].next      = 10018
+		data.level[20].blueprint = "level_europa_intro"
+		data.level[21].force_terminal = true
+		data.level[23].blueprint = "level_europa_concourse"
+		data.level[24].blueprint = "level_europa_civilian"
+		data.level[25].blueprint = "level_europa_ice"
+		data.level[26].blueprint = "level_europa_central_dig"
+		data.level[26].generator = "europa_central_dig"
+		data.level[26].next      = 10027
 
 
 		world.add_branch {
 			name       = "IO",
-			depth      = 18,
-			episode    = 4,
+			depth      = 27,
+			episode    = 8,
 			size       = 7,
 			enemy_list = "io",
 			quest = {
@@ -378,19 +415,19 @@ register_world "trial_completionist"
 				music = "music_io_intermission",
 			},
 		}
-		data.level[18].blueprint = "level_io_intro"
-		data.level[19].force_terminal = true
-		data.level[21].blueprint = "level_io_nexus"
-		data.level[22].blueprint = "level_io_deep"
-		data.level[23].blueprint = "level_io_deep"
-		data.level[24].blueprint = "level_io_gateway"
-		data.level[24].generator = "io_gateway_01"
-		data.level[24].next      = 10025
+		data.level[27].blueprint = "level_io_intro"
+		data.level[28].force_terminal = true
+		data.level[30].blueprint = "level_io_nexus"
+		data.level[31].blueprint = "level_io_deep"
+		data.level[32].blueprint = "level_io_deep"
+		data.level[33].blueprint = "level_io_gateway"
+		data.level[33].generator = "io_gateway_01"
+		data.level[33].next      = 10034
 	
 		world.add_branch {
 			name       = "BEYOND",
-			depth      = 25,
-			episode    = 5,
+			depth      = 34,
+			episode    = 9,
 			size       = 4,
 			quest = {
 				no_info = true,
@@ -423,16 +460,16 @@ register_world "trial_completionist"
 				music     = "music_main_01",
 			},
 		}
-		data.level[25].blueprint = "level_beyond_intro"
-		data.level[25].generator = "beyond_intro"
-		data.level[28].blueprint = "level_beyond_percipice"
-		data.level[28].generator = "beyond_percipice"
-		data.level[28].next      = 10029
+		data.level[34].blueprint = "level_beyond_intro"
+		data.level[34].generator = "beyond_intro"
+		data.level[37].blueprint = "level_beyond_percipice"
+		data.level[37].generator = "beyond_percipice"
+		data.level[37].next      = 10038
 		
 		world.add_branch {
 			name       = "Dante Station",
-			depth      = 29,
-			episode    = 6,
+			depth      = 38,
+			episode    = 10,
 			size       = 4,
 			quest = {
 				no_info = true,
@@ -461,18 +498,18 @@ register_world "trial_completionist"
 				game_over = true,
 			},
 		}
-		data.level[29].blueprint = "level_dante_intro"
-		data.level[29].generator = "dante_intro"
-		data.level[29].force_terminal = true
-		data.level[29].lootbox_count  = 3
-		data.level[32].blueprint = "level_dante_percipice"
-		data.level[32].generator = "dante_percipice"
-		data.level[32].blueprint = "level_dante_altar"
-		data.level[32].generator = "dante_altar"
+		data.level[38].blueprint = "level_dante_intro"
+		data.level[38].generator = "dante_intro"
+		data.level[38].force_terminal = true
+		data.level[38].lootbox_count  = 3
+		data.level[41].blueprint = "level_dante_percipice"
+		data.level[41].generator = "dante_percipice"
+		data.level[41].blueprint = "level_dante_altar"
+		data.level[41].generator = "dante_altar"
 
 		local conamara_data = {
 			name           = "Conamara Chaos Biolabs",
-			episode        = 2,
+			episode        = 7,
 			depth          = 0,
 			size           = 2,
 			enemy_list     = "europa",
@@ -512,7 +549,7 @@ register_world "trial_completionist"
 
 		local dig_data = {
 			name           = "Europa Dig Zone",
-			episode        = 2,
+			episode        = 7,
 			depth          = 0,
 			size           = 3,
 			enemy_list     = "europa",
@@ -552,7 +589,7 @@ register_world "trial_completionist"
 
 		local asterius_data = {
 			name           = "Asterius Habitat",
-			episode        = 2,
+			episode        = 7,
 			depth          = 0,
 			size           = 3,
 			enemy_list     = "europa",
@@ -590,7 +627,7 @@ register_world "trial_completionist"
 
 		local ruins_data = {
 			name           = "Europa Ruins",
-			episode        = 2,
+			episode        = 7,
 			depth          = 0,
 			size           = 2,
 			enemy_list     = "europa",
@@ -636,19 +673,19 @@ register_world "trial_completionist"
 		mid_branch   = europa_pick[2]
 		late_branch  = europa_pick[3]
 
-		early_branch.depth = 10
-		mid_branch.depth   = 11
-		late_branch.depth  = 12
+		early_branch.depth = 21
+		mid_branch.depth   = 22
+		late_branch.depth  = 23
 		early_branch.size  = 3
 		late_branch.size   = 2
 
-		data.level[9].branch  = world.add_branch( early_branch )
-		data.level[10].branch = world.add_branch( mid_branch )
-		data.level[11].branch = world.add_branch( late_branch )
+		data.level[21].branch  = world.add_branch( early_branch )
+		data.level[22].branch = world.add_branch( mid_branch )
+		data.level[23].branch = world.add_branch( late_branch )
 
 		local blacksite_data = {
 			name           = "Io Black Site",
-			episode        = 3,
+			episode        = 8,
 			depth          = 0,
 			size           = 2,
 			enemy_list     = "beyond",
@@ -684,7 +721,7 @@ register_world "trial_completionist"
 
 		local crilab_data = {
 			name           = "CRI Laboratory",
-			episode        = 3,
+			episode        = 8,
 			depth          = 0,
 			size           = 2,
 			enemy_list     = "cri",
@@ -715,7 +752,7 @@ register_world "trial_completionist"
 
 		local nox_data = {
 			name           = "Mephitic Mines",
-			episode        = 3,
+			episode        = 8,
 			depth          = 0,
 			size           = 2,
 			enemy_list     = "io",
@@ -749,7 +786,7 @@ register_world "trial_completionist"
 
 		local halls_data = {
 			name           = "Shadow Halls",
-			episode        = 3,
+			episode        = 8,
 			depth          = 0,
 			size           = 3,
 			enemy_list     = "io",
@@ -793,64 +830,62 @@ register_world "trial_completionist"
 		mid_branch    = table.remove( io_pick, math.random( #io_pick ) ) 
 		late_branch   = table.remove( io_pick, math.random( #io_pick ) ) 
 
-		early_branch.depth = 17
-		mid_branch.depth   = 18
-		late_branch.depth  = 19
+		early_branch.depth = 28
+		mid_branch.depth   = 29
+		late_branch.depth  = 30
 		early_branch.size  = 3
 		late_branch.size   = 2
 
-		data.level[16].branch = world.add_branch( early_branch )
-		data.level[17].branch = world.add_branch( mid_branch )
-		data.level[18].branch = world.add_branch( late_branch )
+		data.level[28].branch = world.add_branch( early_branch )
+		data.level[29].branch = world.add_branch( mid_branch )
+		data.level[30].branch = world.add_branch( late_branch )
 
-		
-
-		local level_12 = { nil, "level_europa_refueling" }
+		local level_24 = { nil, "level_europa_refueling" }
 		if math.random(2) ~= 1 then
-			level_12 = { "europa_pit", "level_europa_pit" }
+			level_24 = { "europa_pit", "level_europa_pit" }
 		end
 
-		data.level[12].special = world.add_special{
-			episode        = 2,
-			depth          = 12,
-			generator      = level_12[1],
-			blueprint      = level_12[2],
+		data.level[24].special = world.add_special{
+			episode        = 7,
+			depth          = 24,
+			generator      = level_24[1],
+			blueprint      = level_24[2],
 			ilevel_mod     = 3,
 			dlevel_mod     = 1,
 			branch_index   = 2,
 			returnable     = true,
 		}
 
-		local level_19 = "level_io_warehouse"
+		local level_31 = "level_io_warehouse"
 		if math.random(2) > 1 then
-			level_19 = "level_io_lock"
+			level_31 = "level_io_lock"
 		end
 
-		data.level[19].special = world.add_special{
-			episode        = 3,
-			depth          = 19,
-			blueprint      = level_19,
+		data.level[31].special = world.add_special{
+			episode        = 8,
+			depth          = 31,
+			blueprint      = level_31,
 			ilevel_mod     = 3,
 			dlevel_mod     = 1,
 			branch_index   = 3,
 			returnable     = true,
 		}
 
-		data.level[22].special = world.add_special{
-			episode        = 4,
-			depth          = 22,
-			next           = 23,
+		data.level[38].special = world.add_special{
+			episode        = 10,
+			depth          = 38,
+			next           = 39,
 			generator      = "beyond_crucible",
 			blueprint      = "level_beyond_crucible",
 			ilevel_mod     = 3,
 			dlevel_mod     = 1,
 			branch_index   = 4,
 		}
-		data.level[22].special_hidden = true
+		data.level[38].special_hidden = true
 
-		data.level[23].special = world.add_special{
-			episode        = 4,
-			depth          = 23,
+		data.level[39].special = world.add_special{
+			episode        = 10,
+			depth          = 39,
 			generator      = "dante_inferno",
 			blueprint      = "level_dante_inferno",
 			ilevel_mod     = 3,
@@ -883,12 +918,26 @@ register_world "trial_completionist"
 		world.data.special_levels = 8
 
 		local roll = math.random(100)
-		if roll <= 20 then
+		if roll <= 10 then
 			world.data.unique.guaranteed = 1
-		elseif roll <= 60 then
+		elseif roll <= 20 then
 			world.data.unique.guaranteed = 2
-		else
+		elseif roll <= 30 then
 			world.data.unique.guaranteed = 3
+		elseif roll <= 40 then
+			world.data.unique.guaranteed = 4
+		elseif roll <= 50 then
+			world.data.unique.guaranteed = 5
+		elseif roll <= 60 then
+			world.data.unique.guaranteed = 6
+		elseif roll <= 70 then
+			world.data.unique.guaranteed = 7
+		elseif roll <= 80 then
+			world.data.unique.guaranteed = 8
+		elseif roll <= 90 then
+			world.data.unique.guaranteed = 9
+		else
+			world.data.unique.guaranteed = 10
 		end
 	end,
 	on_setup = function( )
