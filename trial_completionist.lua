@@ -1,5 +1,34 @@
 nova.require "data/lua/jh/main"
 
+register_blueprint "elevator_inactive_completionist"
+{
+	text = {
+		short = "inactive",
+		failure = "A completionist has to visit the branch!",
+	},
+	callbacks = {
+		on_activate = [=[
+			function( self, who, level )
+				if who == world:get_player() then
+					ui:set_hint( self.text.failure, 2001, 0 )
+					world:play_voice( "vo_refuse" )
+				end
+				return 1
+			end
+		]=],
+		on_attach = [=[
+			function( self, parent )
+				parent.flags.data =  { EF_NOSIGHT, EF_NOMOVE, EF_NOFLY, EF_NOSHOOT, EF_BUMPACTION, EF_ACTION }
+			end
+		]=],
+		on_detach = [=[
+			function( self, parent )
+				parent.flags.data =  {}
+			end
+		]=],
+	},
+}
+
 register_blueprint "elevator_01"
 {
 	flags = {},
@@ -25,7 +54,7 @@ register_blueprint "elevator_01"
 					for index, level in ipairs(unlocked) do					
 						if level == world.data.current then return end
 					end					
-					self:equip("elevator_inactive")            
+					self:equip("elevator_inactive_completionist")            
 				end	
             end
         ]],
