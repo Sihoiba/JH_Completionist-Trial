@@ -153,9 +153,6 @@ register_blueprint "level_beyond_percipice_completionist"
 	text       = {
 		name   = "Precipice of Defeat",
 	},
-	level_info = {
-		clear_vo = "",
-	},
     attributes  = {
         portal      = 0,
     },
@@ -175,35 +172,21 @@ register_blueprint "level_beyond_percipice_completionist"
 				world.data.dante_altar.marks = {}
 				generator.run( self )
 			end
-			]],
-		is_cleared = [[
-			function ( self )
-				if self.level_info.enemies > 0 then 
-					nova.log("Enemies left"..tostring(self.level_info.enemies))
-					return 0 
-				else
-					return 1
-				end
-			end
-		]],
-		on_cleared = [[
-			function ( self )
-				local e = self:place_entity( "portal_01", self:find_coord( "portal_off" ) )
-                ui:set_hint( "{R"..self.text.on_portal.."}", 2001, 0 )
-                world:play_sound( "summon", e )
-                ui:spawn_fx( nil, "fx_summon_exalted", nil, world:get_position( e ) )
-				ui:spawn_fx( nil, "fx_summon_exalted", nil, world:get_position( e ) )
-				ui:spawn_fx( nil, "fx_summon_exalted", nil, world:get_position( e ) )
-				ui:spawn_fx( nil, "fx_summon_exalted", nil, world:get_position( e ) )
-				ui:spawn_fx( nil, "fx_summon_exalted", nil, world:get_position( e ) )
-			end
-		]],
+		]],		
 		on_enter_level = [[
 			function ( self, player, reenter )
 				if reenter then return end
 				world:play_voice( "vo_beyond_boss" )
 			end
 		]],
+		on_kill = [[
+            function ( self, killed, killer, all )
+                if self.attributes.portal == 0 and killed.data.boss then                                      
+					local e = self:place_entity( "portal_01", self:find_coord( "portal_off" ) )                    
+                    ui:spawn_fx( nil, "fx_summon_exalted", nil, world:get_position( e ) )				
+                end
+            end
+        ]],
 	}
 }
 
@@ -432,7 +415,6 @@ register_world "trial_completionist"
 		}
 		data.level[1].blueprint = "level_callisto_intro"
 		data.level[2].force_terminal = true
-		data.level[2].next      = 10028
 		data.level[4].blueprint = "level_callisto_hub"
 		data.level[4].generator = "callisto_hub"
 		data.level[5].blueprint = "level_callisto_civilian"
