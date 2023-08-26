@@ -154,8 +154,7 @@ register_blueprint "level_beyond_intro_completionist"
             ]],
         on_enter_level = [[
             function ( self, player, reenter )
-                if reenter then return end
-                ui:set_achievement( "acv_level_beyond_01" )
+                if reenter then return end                
                 ui:alert {
                     title   = "",
                     teletype = 0,
@@ -367,7 +366,7 @@ register_blueprint "trial_completionist"
 {
     text = {
         name 		= "Completionist",
-        desc   		= "{!COMPLETIONIST MOD}\nYou not going to rest until have seen every last part of every single base accross Jupiter and its moons.\n\n You will visit every single floor, every branch and every special level on every moon.\nThere are new enemies to keep you on your toes and to ensure there is still a challenge and variety as you do many more levels than normal.",
+        desc   		= "{!COMPLETIONIST MOD}\nYou not going to rest until have seen every last part of every single base accross Jupiter and its moons.\n\n You will visit every single floor, every branch (all four!) and every special level (every single one!) on every moon.\nIn order to ensure you do normal elevators are locked when a branch exit is available, and Callisto, Europa and IO each have an extra floor to fit everything in.\n\nReccommended to install the additional enemy mods to keep the variety more interesting and the threats more than just load and load of medusae!",
         abbr   		= "Comp",
         mortem_line = "He wanted to see everything!"
     },
@@ -379,7 +378,7 @@ register_blueprint "trial_completionist"
     callbacks = {
         on_create_player = [[
             function( self, player ) 
-				player:attach( "runtime_murder" )
+				-- player:attach( "runtime_murder" )
             end
         ]],
     },
@@ -683,7 +682,7 @@ register_world "trial_completionist"
 			name           = "Callisto Rift",
 			episode        = 1,
 			depth          = 3,
-			size           = 2,
+			size           = 3,
 			enemy_list     = "callisto",
 			enemy_mod      = { bot = 0, drone = 0.5, demon = 2, },
 			blueprint      = "level_callisto_rift",
@@ -719,7 +718,7 @@ register_world "trial_completionist"
 			name           = "Valhalla Terminal",
 			episode        = 1,
 			depth          = 4,
-			size           = 2,
+			size           = 3,
 			enemy_list     = "callisto",
 			enemy_mod      = { demon2 = 0, civilian = 2, },
 			blueprint      = "level_callisto_valhalla",
@@ -796,15 +795,15 @@ register_world "trial_completionist"
 		
 		call_mid_branch = table.remove( remain, math.random( #remain ) ) 
 		call_mid_branch.size   = 3
-		call_mid_branch.depth   = 7
+		call_mid_branch.depth   = 4
 		
 		call_late_branch = table.remove( remain, math.random( #remain ) ) 
 		call_late_branch.size   = 3
-		call_late_branch.depth  = 10
+		call_late_branch.depth  = 5
 
 	    call_final_branch = table.remove( remain, math.random( #remain ) )		
 		call_final_branch.size   = 3
-		call_final_branch.depth  = 14
+		call_final_branch.depth  = 6
 
 		data.level[2].branch = world.add_branch( call_early_branch )
 		data.level[35].next = 3
@@ -1355,18 +1354,19 @@ register_world "trial_completionist"
 					local source
 					if #b.index <= 4 then
 						target  = b.index[ math.random( math.min( #b.index, 2 ) ) ]
-						local entry   = b.index[1]
-						local pbranch = world.data.branch[ b.prev_branch ]
-						nova.log("Generating quests "..tostring(b.index).." previous branch "..tostring(#pbranch))
+						local entry   = b.index[1]						
+						local pbranch = world.data.branch[ b.prev_branch ]						
 						local epoint 
-						for idx,id in ipairs( pbranch.index ) do
+						for idx,id in ipairs( pbranch.index ) do							
 							if world.data.level[id].branch == entry then
 								epoint = idx
 								break
 							end
 						end
-						local pos = 1 + math.random( epoint - 1 )
-						source = pbranch.index[ pos ]
+						if epoint then
+							local pos = 1 + math.random( epoint - 1 )
+							source = pbranch.index[ pos ]
+						end
 					else
 						target  = b.index[2 + math.random( 3 )]
 						source  = b.index[2]
@@ -1388,8 +1388,10 @@ register_world "trial_completionist"
 						sid = ilist:roll( world.data.level[target].depth, quest_used, true )
 					end
 					quest_used[sid] = 0
-					local idx = world:add_quest( player, world:create_entity( sid, target ) )
-					table.insert( world.data.level[source].quest, idx )
+					if source then
+						local idx = world:add_quest( player, world:create_entity( sid, target ) )
+						table.insert( world.data.level[source].quest, idx )
+					end	
 				end
 			end
 		end
