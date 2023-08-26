@@ -16,3 +16,7 @@ Normal elevators are locked if there is a branch elevator, so you have to visit 
 ## Installing
 
 Create a mods folder in your Jupiter Hell game directory if doesn't exist then add the folder there; for Mac users, navigate to your Jupiter Hell app, right click, select "show package contents", navigate to Contents > MacOS, and put the downloaded mod folder into mods folder found there.
+
+## Notes
+* Recommended to install the new enemy mods to give you self some more variety and to help the challenge keep pace with the power you will achieve.
+* Not compatible with Jovasec PDA as it can't handle the non standard branch structure (doesn't crash, just doesn't render correctly)
