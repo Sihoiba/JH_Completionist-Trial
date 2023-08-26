@@ -1,5 +1,17 @@
 # JH_Completionist-Trial
-A Jupiter Hell mod to add a new trial with new enemies.
+A Jupiter Hell mod to add a new trial.
+
+Always just take the same branches?
+Ever feel sad about having to pick between branch rewards?
+Feel the normal game is too short, but endless is too long and too repetitive?
+
+Completion Trial. Like a normal game except you get to (and have to) visit every branch.
+
+Visit Callisto, Europa, Io, Beyond and Dante. Fight both the Summoner and the Harbinger. Achieve every branch mechanic if you can!
+
+Callisto, Europa and Io are all 8 levels deep. On each moon all four branches will spawn and will be 3 levels deep, and both the main branch special levels are accessible. Branches and special level is order is randomised much like a normal seed.
+
+Normal elevators are locked if there is a branch elevator, so you have to visit every branch; though you can still and skip the special levels if you don't like fun.
 
 ## Installing
 
