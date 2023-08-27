@@ -198,7 +198,7 @@ register_blueprint "level_beyond_percipice_completionist"
 			function ( self )
 				world.data.dante_altar = world.data.dante_altar or {}
 				world.data.dante_altar.marks = {}
-				generator.run( self )
+				generator.run( self )				
 			end
 		]],		
 		on_enter_level = [[
@@ -207,12 +207,22 @@ register_blueprint "level_beyond_percipice_completionist"
 				world:play_voice( "vo_beyond_boss" )
 			end
 		]],
+		is_cleared = [[
+            function ( self )
+                if self.level_info.enemies > 2 then return 0 end                
+                return 1
+            end
+        ]],
 		on_kill = [[
-            function ( self, killed, killer, all )
+            function ( self, killed, killer, all )				
                 if self.attributes.portal == 0 and killed.data.boss then                                      
 					local e = self:place_entity( "portal_01", self:find_coord( "portal_off" ) )                    
-                    ui:spawn_fx( nil, "fx_summon_exalted", nil, world:get_position( e ) )				
+                    ui:spawn_fx( nil, "fx_summon_exalted", nil, world:get_position( e ) )			
                 end
+				if self.level_info.enemies == 2 then 
+					self.level_info.cleared = true
+					nova.log("Beyond precipice cleared")
+				end
             end
         ]],
 	}
@@ -596,7 +606,6 @@ register_world "trial_completionist"
 			intermission = {
 				scene     = "intermission_beyond",
 				music     = "music_main_01",
-				game_over = true,
 			},
 		}
 		data.level[25].blueprint = "level_beyond_intro_completionist"
@@ -1251,7 +1260,7 @@ register_world "trial_completionist"
 		data.level[28].special = world.add_special{
 			episode        = 4,
 			depth          = 28,
-			next           = 29,
+			next           = 10029,
 			generator      = "beyond_crucible",
 			blueprint      = "level_beyond_crucible",
 			ilevel_mod     = 3,
