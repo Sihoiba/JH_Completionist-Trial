@@ -344,6 +344,24 @@ register_blueprint "level_dante_intro_completionist"
     }
 }
 
+register_blueprint "runtime_enter_purg"
+{
+	flags = { EF_NOPICKUP },
+    callbacks = {       
+		on_enter_level = [[
+            function ( self, player, reenter )
+				if world.data.current == 89 then
+					if reenter then
+						world:play_voice( "vo_refuse" )
+					else	
+						world:play_voice( "vo_fast_leave" )
+					end	
+				end
+			end
+		]],		        
+    },
+}
+
 register_blueprint "runtime_murder"
 {
 	flags = { EF_NOPICKUP },
@@ -389,6 +407,7 @@ register_blueprint "trial_completionist"
         on_create_player = [[
             function( self, player ) 
 				-- player:attach( "runtime_murder" )
+				player:attach( "runtime_enter_purg" )
             end
         ]],
     },
