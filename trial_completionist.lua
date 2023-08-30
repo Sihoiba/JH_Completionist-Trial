@@ -50,7 +50,7 @@ register_blueprint "elevator_01"
 				local unlocked = {1,6,7,9,14,15,17}
 				nova.log("Current level "..tostring(world.data.current))
 				if world.data.completionist_trial then
-					if world.data.current >= 22 then return end
+					if world.data.current >= 22 and world.data.current ~= 30 then return end
 					for index, level in ipairs(unlocked) do					
 						if level == world.data.current then return end
 					end					
@@ -408,6 +408,7 @@ register_blueprint "trial_completionist"
             function( self, player ) 
 				-- player:attach( "runtime_murder" )
 				player:attach( "runtime_enter_purg" )
+				player:attach( "keycard_red", { stack = { amount = 3 } } )
             end
         ]],
     },
