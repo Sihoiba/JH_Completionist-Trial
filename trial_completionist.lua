@@ -4,13 +4,17 @@ register_blueprint "elevator_inactive_completionist"
 {
 	text = {
 		short = "inactive",
-		failure = "A completionist has to visit the branch!",
+		failure = "A completionist has to visit the ",
 	},
 	callbacks = {
 		on_activate = [=[
 			function( self, who, level )
 				if who == world:get_player() then
-					ui:set_hint( self.text.failure, 2001, 0 )
+					local exitType = "branch"
+					if world.data.level[ world.data.current ].special then
+						exitType = "special level"
+					end
+					ui:set_hint( self.text.failure..exitType.."!", 2001, 0 )
 					world:play_voice( "vo_refuse" )
 				end
 				return 1
@@ -47,10 +51,9 @@ register_blueprint "elevator_01"
 	callbacks = {
 		on_create = [[
 			function ( self )
-				local unlocked = {1,6,7,9,14,15,17}
+				local unlocked = {1,9,17,25,26,27,29,31,33,34,37,38,41,42,45,46,49,50,53,54,57,58,61,62,65,66,69,70,73,74,77,78,88}
 				nova.log("Current level "..tostring(world.data.current))
 				if world.data.completionist_trial then
-					if world.data.current >= 22 and world.data.current ~= 30 then return end
 					for index, level in ipairs(unlocked) do					
 						if level == world.data.current then return end
 					end					
@@ -111,15 +114,6 @@ register_blueprint "elevator_01"
 		]=],
 	}
 }
-
-function killOnSight(self, being, player)
-	if being.data and being.data.ai.group ~= "player" then
-		if being.health.current > 0 then 
-			being.health.current = 1
-			world:get_level():apply_damage( self, being, 100, ivec2(), "pierce", player )
-		end		
-	end
-end
 
 register_blueprint "level_beyond_intro_completionist"
 {
@@ -344,7 +338,7 @@ register_blueprint "level_dante_intro_completionist"
     }
 }
 
-register_blueprint "runtime_enter_purg"
+register_blueprint "runtime_completionist"
 {
 	flags = { EF_NOPICKUP },
     callbacks = {       
@@ -356,11 +350,29 @@ register_blueprint "runtime_enter_purg"
 					else	
 						world:play_voice( "vo_fast_leave" )
 					end	
+				elseif reenter then
+					for e in world:get_level():entities() do
+						if world:get_id( e ) == "elevator_01" then					
+							local child = e:child( "elevator_inactive_completionist" )
+							if child then
+								world:mark_destroy( child )
+							end
+						end
+                    end					
 				end
 			end
-		]],		        
+		]]	
     },
 }
+
+function killOnSight(self, being, player)
+	if being.data and being.data.ai.group ~= "player" then
+		if being.health.current > 0 then 
+			being.health.current = 1
+			world:get_level():apply_damage( self, being, 100, ivec2(), "pierce", player )
+		end		
+	end
+end
 
 register_blueprint "runtime_murder"
 {
@@ -407,7 +419,7 @@ register_blueprint "trial_completionist"
         on_create_player = [[
             function( self, player ) 
 				-- player:attach( "runtime_murder" )
-				player:attach( "runtime_enter_purg" )
+				player:attach( "runtime_completionist" )
 				player:attach( "keycard_red", { stack = { amount = 3 } } )
             end
         ]],
@@ -1004,19 +1016,19 @@ register_world "trial_completionist"
 		local remain = { asterius_data, ruins_data, conamara_data, dig_data }
 		eur_early_branch = table.remove( remain, math.random( #remain ) ) 
 		eur_early_branch.size = 3
-		eur_early_branch.depth = 10
+		eur_early_branch.depth = 22
 		
 		eur_mid_branch = table.remove( remain, math.random( #remain ) ) 
 		eur_mid_branch.size   = 3
-		eur_mid_branch.depth   = 11
+		eur_mid_branch.depth   = 23
 		
 		eur_late_branch = table.remove( remain, math.random( #remain ) ) 
 		eur_late_branch.size   = 3
-		eur_late_branch.depth  = 12
+		eur_late_branch.depth  = 24
 
 	    eur_final_branch = table.remove( remain, math.random( #remain ) )		
 		eur_final_branch.size   = 3
-		eur_final_branch.depth  = 13
+		eur_final_branch.depth  = 25
 
 		data.level[10].branch = world.add_branch( eur_early_branch )
 		data.level[51].next = 11
@@ -1173,19 +1185,19 @@ register_world "trial_completionist"
 		local remain = { blacksite_data, crilab_data, nox_data, halls_data }
 		io_early_branch = table.remove( remain, math.random( #remain ) ) 
 		io_early_branch.size = 3
-		io_early_branch.depth = 18
+		io_early_branch.depth = 42
 		
 		io_mid_branch = table.remove( remain, math.random( #remain ) ) 
 		io_mid_branch.size   = 3
-		io_mid_branch.depth   = 19
+		io_mid_branch.depth   = 43
 		
 		io_late_branch = table.remove( remain, math.random( #remain ) ) 
 		io_late_branch.size   = 3
-		io_late_branch.depth  = 20
+		io_late_branch.depth  = 44
 
 	    io_final_branch = table.remove( remain, math.random( #remain ) )		
 		io_final_branch.size   = 3
-		io_final_branch.depth  = 21
+		io_final_branch.depth  = 45
 
 		data.level[18].branch = world.add_branch( io_early_branch )
 		data.level[67].next = 19
@@ -1232,7 +1244,7 @@ register_world "trial_completionist"
 
 		data.level[14].special = world.add_special{
 			episode        = 2,
-			depth          = 14,
+			depth          = 26,
 			generator      = level_14[1],
 			blueprint      = level_14[2],
 			ilevel_mod     = 3,
@@ -1242,7 +1254,7 @@ register_world "trial_completionist"
 		}
 		data.level[15].special = world.add_special{
 			episode        = 2,
-			depth          = 15,
+			depth          = 27,
 			generator      = level_15[1],
 			blueprint      = level_15[2],
 			ilevel_mod     = 3,
@@ -1260,7 +1272,7 @@ register_world "trial_completionist"
 
 		data.level[22].special = world.add_special{
 			episode        = 3,
-			depth          = 22,
+			depth          = 46,
 			blueprint      = level_22,
 			ilevel_mod     = 3,
 			dlevel_mod     = 1,
@@ -1269,7 +1281,7 @@ register_world "trial_completionist"
 		}
 		data.level[23].special = world.add_special{
 			episode        = 3,
-			depth          = 23,
+			depth          = 47,
 			blueprint      = level_23,
 			ilevel_mod     = 3,
 			dlevel_mod     = 1,
@@ -1279,7 +1291,7 @@ register_world "trial_completionist"
 
 		data.level[28].special = world.add_special{
 			episode        = 4,
-			depth          = 28,
+			depth          = 65,
 			next           = 10029,
 			generator      = "beyond_crucible",
 			blueprint      = "level_beyond_crucible",
@@ -1291,7 +1303,7 @@ register_world "trial_completionist"
 
 		data.level[30].special = world.add_special{
 			episode        = 5,
-			depth          = 30,
+			depth          = 69,
 			next           = 31,
 			generator      = "dante_inferno",
 			blueprint      = "level_dante_inferno",
