@@ -345,6 +345,14 @@ register_blueprint "runtime_completionist"
 		on_enter_level = [[
             function ( self, player, reenter )
 				if world.data.current == 89 then
+					world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_exit_n" ))
+					world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_plate_n" ))
+					world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_exit_e" ))
+					world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_plate_e" ))
+					world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_exit_s" ))
+					world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_plate_s" ))
+					world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_exit_w" ))
+					world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_plate_w" ))
 					if reenter then
 						world:play_voice( "vo_refuse" )
 					else	
