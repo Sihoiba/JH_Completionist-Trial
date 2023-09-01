@@ -1252,7 +1252,7 @@ register_world "trial_completionist"
 
 		data.level[14].special = world.add_special{
 			episode        = 2,
-			depth          = 26,
+			depth          = 14,
 			generator      = level_14[1],
 			blueprint      = level_14[2],
 			ilevel_mod     = 3,
@@ -1262,7 +1262,7 @@ register_world "trial_completionist"
 		}
 		data.level[15].special = world.add_special{
 			episode        = 2,
-			depth          = 27,
+			depth          = 15,
 			generator      = level_15[1],
 			blueprint      = level_15[2],
 			ilevel_mod     = 3,
@@ -1280,7 +1280,7 @@ register_world "trial_completionist"
 
 		data.level[22].special = world.add_special{
 			episode        = 3,
-			depth          = 46,
+			depth          = 22,
 			blueprint      = level_22,
 			ilevel_mod     = 3,
 			dlevel_mod     = 1,
@@ -1289,7 +1289,7 @@ register_world "trial_completionist"
 		}
 		data.level[23].special = world.add_special{
 			episode        = 3,
-			depth          = 47,
+			depth          = 23,
 			blueprint      = level_23,
 			ilevel_mod     = 3,
 			dlevel_mod     = 1,
@@ -1299,7 +1299,7 @@ register_world "trial_completionist"
 
 		data.level[28].special = world.add_special{
 			episode        = 4,
-			depth          = 65,
+			depth          = 28,
 			next           = 10029,
 			generator      = "beyond_crucible",
 			blueprint      = "level_beyond_crucible",
@@ -1311,7 +1311,7 @@ register_world "trial_completionist"
 
 		data.level[30].special = world.add_special{
 			episode        = 5,
-			depth          = 69,
+			depth          = 30,
 			next           = 31,
 			generator      = "dante_inferno",
 			blueprint      = "level_dante_inferno",
