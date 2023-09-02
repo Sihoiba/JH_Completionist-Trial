@@ -344,6 +344,7 @@ register_blueprint "runtime_completionist"
     callbacks = {       
 		on_enter_level = [[
             function ( self, player, reenter )
+				nova.log("Level: "..world:get_level().text.name.." depth: "..tostring(world:get_level().level_info.depth))
 				if world.data.current == 89 then
 					world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_exit_n" ))
 					world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_plate_n" ))
@@ -493,18 +494,24 @@ register_world "trial_completionist"
 		}
 		data.level[1].blueprint = "level_callisto_intro"
 		data.level[2].force_terminal = true
+		data.level[3].depth = 6
 		data.level[4].blueprint = "level_callisto_hub"
 		data.level[4].generator = "callisto_hub"
+		data.level[4].depth = 10
 		data.level[5].blueprint = "level_callisto_civilian"
+		data.level[5].depth = 14
 		data.level[6].blueprint = "level_callisto_civilian"
+		data.level[6].depth = 18
 		data.level[7].blueprint = "level_callisto_civilian"
+		data.level[7].depth = 19
 		data.level[8].blueprint = "level_callisto_spaceport"
 		data.level[8].generator = "callisto_spaceport"
+		data.level[8].depth = 20
 		data.level[8].next      = 10009
 
 		world.add_branch {
 			name       = "EUROPA",
-			depth      = 20,
+			depth      = 21,
 			episode    = 2,
 			size       = 8,
 			enemy_list = "europa",
@@ -548,20 +555,27 @@ register_world "trial_completionist"
 				music = "music_europa_intermission",
 			},
 		}
-		data.level[9].blueprint = "level_europa_intro"
+		data.level[9].blueprint = "level_europa_intro"		
 		data.level[10].force_terminal = true
+		data.level[10].depth = 22
+		data.level[11].depth = 26
 		data.level[12].blueprint = "level_europa_concourse"
+		data.level[12].depth = 30
 		data.level[13].blueprint = "level_europa_civilian"
+		data.level[13].depth = 34
 		data.level[14].blueprint = "level_europa_ice"
+		data.level[14].depth = 38
 		data.level[15].blueprint = "level_europa_ice"
+		data.level[15].depth = 39
 		data.level[16].blueprint = "level_europa_central_dig"
 		data.level[16].generator = "europa_central_dig"
+		data.level[16].depth = 40
 		data.level[16].next      = 10017
 
 
 		world.add_branch {
 			name       = "IO",
-			depth      = 40,
+			depth      = 41,
 			episode    = 3,
 			size       = 8,
 			enemy_list = "io",
@@ -604,17 +618,24 @@ register_world "trial_completionist"
 		}
 		data.level[17].blueprint = "level_io_intro"
 		data.level[18].force_terminal = true
+		data.level[18].depth = 42
+		data.level[19].depth = 46
 		data.level[20].blueprint = "level_io_nexus"
+		data.level[20].depth = 50
 		data.level[21].blueprint = "level_io_deep"
+		data.level[21].depth = 54
 		data.level[22].blueprint = "level_io_deep"
+		data.level[22].depth = 58
 		data.level[23].blueprint = "level_io_deep"
+		data.level[23].depth = 59
 		data.level[24].blueprint = "level_io_gateway"
 		data.level[24].generator = "io_gateway_01"
+		data.level[24].depth = 60
 		data.level[24].next      = 10025
 
 		world.add_branch {
 			name       = "BEYOND",
-			depth      = 60,
+			depth      = 61,
 			episode    = 4,
 			size       = 4,
 			quest = {
@@ -650,13 +671,16 @@ register_world "trial_completionist"
 		}
 		data.level[25].blueprint = "level_beyond_intro_completionist"
 		data.level[25].generator = "beyond_intro"
+		data.level[26].depth = 62
+		data.level[27].depth = 63		
 		data.level[28].blueprint = "level_beyond_percipice_completionist"
 		data.level[28].generator = "beyond_percipice_completionist"
+		data.level[28].depth = 64
 		data.level[28].next      = 10029
 
 		world.add_branch {
 			name       = "Dante Station",
-			depth      = 64,
+			depth      = 65,
 			episode    = 5,
 			size       = 4,
 			quest = {
@@ -690,8 +714,11 @@ register_world "trial_completionist"
 		data.level[29].generator = "dante_intro"
 		data.level[29].force_terminal = true
 		data.level[29].lootbox_count  = 3
+		data.level[30].depth = 66
+		data.level[31].depth = 67
 		data.level[32].blueprint = "level_dante_altar"
 		data.level[32].generator = "dante_altar"
+		data.level[32].depth = 68
 		data.cot.boss_index = 32
 
 		local mines_data = {
@@ -844,15 +871,15 @@ register_world "trial_completionist"
 		
 		call_mid_branch = table.remove( remain, math.random( #remain ) ) 
 		call_mid_branch.size   = 3
-		call_mid_branch.depth   = 4
+		call_mid_branch.depth   = 7
 		
 		call_late_branch = table.remove( remain, math.random( #remain ) ) 
 		call_late_branch.size   = 3
-		call_late_branch.depth  = 5
+		call_late_branch.depth  = 11
 
 	    call_final_branch = table.remove( remain, math.random( #remain ) )		
 		call_final_branch.size   = 3
-		call_final_branch.depth  = 6
+		call_final_branch.depth  = 15
 
 		data.level[2].branch = world.add_branch( call_early_branch )
 		data.level[35].next = 3
@@ -1024,19 +1051,19 @@ register_world "trial_completionist"
 		local remain = { asterius_data, ruins_data, conamara_data, dig_data }
 		eur_early_branch = table.remove( remain, math.random( #remain ) ) 
 		eur_early_branch.size = 3
-		eur_early_branch.depth = 22
+		eur_early_branch.depth = 23
 		
 		eur_mid_branch = table.remove( remain, math.random( #remain ) ) 
 		eur_mid_branch.size   = 3
-		eur_mid_branch.depth   = 23
+		eur_mid_branch.depth   = 27
 		
 		eur_late_branch = table.remove( remain, math.random( #remain ) ) 
 		eur_late_branch.size   = 3
-		eur_late_branch.depth  = 24
+		eur_late_branch.depth  = 31
 
 	    eur_final_branch = table.remove( remain, math.random( #remain ) )		
 		eur_final_branch.size   = 3
-		eur_final_branch.depth  = 25
+		eur_final_branch.depth  = 35
 
 		data.level[10].branch = world.add_branch( eur_early_branch )
 		data.level[51].next = 11
@@ -1193,19 +1220,19 @@ register_world "trial_completionist"
 		local remain = { blacksite_data, crilab_data, nox_data, halls_data }
 		io_early_branch = table.remove( remain, math.random( #remain ) ) 
 		io_early_branch.size = 3
-		io_early_branch.depth = 42
+		io_early_branch.depth = 43
 		
 		io_mid_branch = table.remove( remain, math.random( #remain ) ) 
 		io_mid_branch.size   = 3
-		io_mid_branch.depth   = 43
+		io_mid_branch.depth   = 47
 		
 		io_late_branch = table.remove( remain, math.random( #remain ) ) 
 		io_late_branch.size   = 3
-		io_late_branch.depth  = 44
+		io_late_branch.depth  = 51
 
 	    io_final_branch = table.remove( remain, math.random( #remain ) )		
 		io_final_branch.size   = 3
-		io_final_branch.depth  = 45
+		io_final_branch.depth  = 55
 
 		data.level[18].branch = world.add_branch( io_early_branch )
 		data.level[67].next = 19
@@ -1224,7 +1251,8 @@ register_world "trial_completionist"
 		end
 		data.level[6].special = world.add_special{
 			episode        = 1,
-			depth          = 6,
+			depth          = 18,
+			prev           = 6,
 			generator      = level_6[1],
 			blueprint      = level_6[2],
 			ilevel_mod     = 2,
@@ -1234,7 +1262,8 @@ register_world "trial_completionist"
 		}
 		data.level[7].special = world.add_special{
 			episode        = 1,
-			depth          = 7,
+			depth          = 19,
+			prev           = 7,
 			generator      = level_7[1],
 			blueprint      = level_7[2],
 			ilevel_mod     = 2,
@@ -1252,7 +1281,8 @@ register_world "trial_completionist"
 
 		data.level[14].special = world.add_special{
 			episode        = 2,
-			depth          = 14,
+			depth          = 38,			
+			prev           = 14,
 			generator      = level_14[1],
 			blueprint      = level_14[2],
 			ilevel_mod     = 3,
@@ -1262,7 +1292,8 @@ register_world "trial_completionist"
 		}
 		data.level[15].special = world.add_special{
 			episode        = 2,
-			depth          = 15,
+			depth          = 39,
+			prev           = 15,
 			generator      = level_15[1],
 			blueprint      = level_15[2],
 			ilevel_mod     = 3,
@@ -1280,7 +1311,8 @@ register_world "trial_completionist"
 
 		data.level[22].special = world.add_special{
 			episode        = 3,
-			depth          = 22,
+			depth          = 58,
+			prev           = 22,
 			blueprint      = level_22,
 			ilevel_mod     = 3,
 			dlevel_mod     = 1,
@@ -1289,7 +1321,8 @@ register_world "trial_completionist"
 		}
 		data.level[23].special = world.add_special{
 			episode        = 3,
-			depth          = 23,
+			depth          = 59,
+			prev           = 23,
 			blueprint      = level_23,
 			ilevel_mod     = 3,
 			dlevel_mod     = 1,
@@ -1299,7 +1332,7 @@ register_world "trial_completionist"
 
 		data.level[28].special = world.add_special{
 			episode        = 4,
-			depth          = 28,
+			depth          = 64,
 			next           = 10029,
 			generator      = "beyond_crucible",
 			blueprint      = "level_beyond_crucible",
@@ -1311,7 +1344,7 @@ register_world "trial_completionist"
 
 		data.level[30].special = world.add_special{
 			episode        = 5,
-			depth          = 30,
+			depth          = 66,
 			next           = 31,
 			generator      = "dante_inferno",
 			blueprint      = "level_dante_inferno",
