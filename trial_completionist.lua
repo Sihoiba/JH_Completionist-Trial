@@ -1503,6 +1503,37 @@ register_world "trial_completionist"
 		end
 	end,
 	on_entity = function( entity )
-		world.on_entity( entity )
-	end,
+        world.on_entity( entity )
+        if entity.data and entity.data.ai and entity.attributes and
+                ( not entity.data.is_player ) and entity.attributes.health and 
+                ( not entity.data.boss ) and string.sub( world:get_id( entity ), 1, 7 ) ~= "exalted" then
+            local linfo = world.data.level[ world.data.current ]
+            if linfo then
+                local dlevel = linfo.dlevel or 1
+                local ep     = linfo.episode or 1				
+                if ep > 3 and math.random( 100 ) < ( 20 + dlevel * 5 ) then
+                    local count = ep - 3
+                    local exalted_traits = {
+                        { "exalted_kw_unstable", },
+                        { "exalted_kw_hunter", min = 8, },
+                        { "exalted_kw_tough", tag = "health" },
+                        { "exalted_kw_resilient", min = 15, tag = "health" },
+                        { "exalted_kw_accurate", },
+                        { "exalted_kw_fast", min = 12, },
+                        { "exalted_kw_lethal", tag = "damage" },
+                        { "exalted_kw_deadly", min = 18, tag = "damage" }, 
+                        { "exalted_kw_regenerate", tag = "health", min = 18, },
+                    }
+                    if entity.data.nightmare and entity.data.nightmare.id then
+                        local nid = entity.data.nightmare.id
+                        if blueprints[nid] and blueprints[nid].data and blueprints[nid].data.exalted_traits then
+                            exalted_traits = blueprints[nid].data.exalted_traits
+                        end
+                    end
+
+                    make_exalted( entity, dlevel, exalted_traits, { count = count, } )
+                end
+            end
+        end
+    end,
 }
