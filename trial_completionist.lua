@@ -299,16 +299,16 @@ register_blueprint "runtime_completionist"
                         world:mark_destroy( inactive_elevator )
                     end
                 else
-					if world.data.current == world.data.cal_guaranteed_unique then
-						nova.log("Unique guaranteed on next Callisto special encountered")
-						world.data.unique.guaranteed = 1
-					elseif world.data.current == world.data.eur_guaranteed_unique then
-						nova.log("Unique guaranteed on next Europa special encountered")
-						world.data.unique.guaranteed = 2
-					elseif world.data.current == world.data.io_guaranteed_unique then
-						nova.log("Unique guaranteed on next Io special encountered")
-						world.data.unique.guaranteed = 3
-					end
+                    if world.data.current == world.data.cal_guaranteed_unique then
+                        nova.log("Unique guaranteed on next Callisto special encountered")
+                        world.data.unique.guaranteed = 1
+                    elseif world.data.current == world.data.eur_guaranteed_unique then
+                        nova.log("Unique guaranteed on next Europa special encountered")
+                        world.data.unique.guaranteed = 2
+                    elseif world.data.current == world.data.io_guaranteed_unique then
+                        nova.log("Unique guaranteed on next Io special encountered")
+                        world.data.unique.guaranteed = 3
+                    end
                     local unlocked = {1,9,17,25,26,27,29,31,33,34,37,38,41,42,45,46,49,50,53,54,57,58,61,62,65,66,69,70,73,74,77,78,88}
                     local do_lock = true
                     for index, level in ipairs(unlocked) do                 
@@ -1348,18 +1348,18 @@ register_world "trial_completionist"
         world.data.special_levels = 19
         world.data.completionist_trial = true
         
-		local guaranteed_uniques_cal = {2, 3, 4, 5, 6, 7}
-		local guaranteed_uniques_eur = {10, 11, 12, 13, 14, 15}
-		local guaranteed_uniques_io = {18, 19, 20, 21, 22, 23}
-		
-		world.data.cal_guaranteed_unique = table.remove( guaranteed_uniques_cal, math.random( #guaranteed_uniques_cal ) )
-		world.data.eur_guaranteed_unique = table.remove( guaranteed_uniques_eur, math.random( #guaranteed_uniques_eur ) )
-		world.data.io_guaranteed_unique = table.remove( guaranteed_uniques_io, math.random( #guaranteed_uniques_io ) )
-		
-		nova.log("Callisto unique on branch from "..world.data.cal_guaranteed_unique)
-		nova.log("Europa unique on branch from "..world.data.eur_guaranteed_unique)
-		nova.log("Io unique on branch from "..world.data.io_guaranteed_unique)
-				
+        local guaranteed_uniques_cal = {2, 3, 4, 5, 6, 7}
+        local guaranteed_uniques_eur = {10, 11, 12, 13, 14, 15}
+        local guaranteed_uniques_io = {18, 19, 20, 21, 22, 23}
+        
+        world.data.cal_guaranteed_unique = table.remove( guaranteed_uniques_cal, math.random( #guaranteed_uniques_cal ) )
+        world.data.eur_guaranteed_unique = table.remove( guaranteed_uniques_eur, math.random( #guaranteed_uniques_eur ) )
+        world.data.io_guaranteed_unique = table.remove( guaranteed_uniques_io, math.random( #guaranteed_uniques_io ) )
+        
+        nova.log("Callisto unique on branch from "..world.data.cal_guaranteed_unique)
+        nova.log("Europa unique on branch from "..world.data.eur_guaranteed_unique)
+        nova.log("Io unique on branch from "..world.data.io_guaranteed_unique)
+                
         world.data.unique.guaranteed = 0        
     end,
     on_setup = function( )
