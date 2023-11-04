@@ -121,6 +121,7 @@ register_blueprint "level_beyond_percipice_completionist"
         ]],
         is_cleared = [[
             function ( self )
+				-- This is needed because the summoner adds 1 to the world enemy count every time it teleports on the health trigger.
                 if self.level_info.enemies > 2 then return 0 end                
                 return 1
             end
