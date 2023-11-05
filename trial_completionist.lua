@@ -66,7 +66,7 @@ register_blueprint "level_beyond_intro_completionist"
             ]],
         on_enter_level = [[
             function ( self, player, reenter )
-                if reenter then return end                
+                if reenter then return end
                 ui:alert {
                     title   = "",
                     teletype = 0,
@@ -83,7 +83,7 @@ register_blueprint "level_beyond_intro_completionist"
                 end
                 world:play_voice( vo )
             end
-        ]],       
+        ]],
     }
 }
 
@@ -110,9 +110,9 @@ register_blueprint "level_beyond_percipice_completionist"
             function ( self )
                 world.data.dante_altar = world.data.dante_altar or {}
                 world.data.dante_altar.marks = {}
-                generator.run( self )               
+                generator.run( self )
             end
-        ]],     
+        ]],
         on_enter_level = [[
             function ( self, player, reenter )
                 if reenter then return end
@@ -121,18 +121,18 @@ register_blueprint "level_beyond_percipice_completionist"
         ]],
         is_cleared = [[
             function ( self )
-				-- This is needed because the summoner adds 1 to the world enemy count every time it teleports on the health trigger.
-                if self.level_info.enemies > 2 then return 0 end                
+                -- This is needed because the summoner adds 1 to the world enemy count every time it teleports on the health trigger.
+                if self.level_info.enemies > 2 then return 0 end
                 return 1
             end
         ]],
         on_kill = [[
-            function ( self, killed, killer, all )              
-                if self.attributes.portal == 0 and killed.data.boss then                                      
-                    local e = self:place_entity( "portal_01", self:find_coord( "portal_off" ) )                    
-                    ui:spawn_fx( nil, "fx_summon_exalted", nil, world:get_position( e ) )           
+            function ( self, killed, killer, all )
+                if self.attributes.portal == 0 and killed.data.boss then
+                    local e = self:place_entity( "portal_01", self:find_coord( "portal_off" ) )
+                    ui:spawn_fx( nil, "fx_summon_exalted", nil, world:get_position( e ) )
                 end
-                if self.level_info.enemies == 2 then 
+                if self.level_info.enemies == 2 then
                     self.level_info.cleared = true
                     nova.log("Beyond precipice cleared")
                 end
@@ -183,7 +183,7 @@ register_generator "beyond_percipice_completionist"
         ]],
         }
         if world.data.exalted_boss or DIFFICULTY > 3 then boss_tile.translation["S"][3] = "exalted_summoner_c" end
-        local tile  = map_tile.new( boss_tile.map, boss_tile.translation, self ) 
+        local tile  = map_tile.new( boss_tile.map, boss_tile.translation, self )
         tile:flip_xy()
         tile:place( self, larea.a, generator.placer, self )
         for c in self:coords( "marker3" ) do
@@ -192,10 +192,10 @@ register_generator "beyond_percipice_completionist"
         end
         return { area = larea, no_elevator_check = true }
     end,
-    
+
     spawn_enemies = function( self )
         generator.spawn_enemies( self, 10000, {
-            list       = core.lists.being.beyond, 
+            list       = core.lists.being.beyond,
             mod        = { bot = 0, drone = 0, former = 0 },
             level      = 28,
             safe       = "portal_off",
@@ -253,18 +253,18 @@ register_blueprint "level_dante_intro_completionist"
                 end
                 world:play_voice( vo )
             end
-        ]],        
+        ]],
     }
 }
 
 register_blueprint "runtime_completionist"
 {
     flags = { EF_NOPICKUP },
-    callbacks = {       
+    callbacks = {
         on_enter_level = [[
             function ( self, player, reenter )
                 nova.log("Level: "..world:get_level().text.name.." depth: "..tostring(world:get_level().level_info.depth).." reenter "..tostring(reenter))
-                
+
                 if world.data.current == 89 then
                     world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_exit_n" ))
                     world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_plate_n" ))
@@ -276,25 +276,25 @@ register_blueprint "runtime_completionist"
                     world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_plate_w" ))
                     if reenter then
                         world:play_voice( "vo_refuse" )
-                    else    
+                    else
                         world:play_voice( "vo_fast_leave" )
-                    end 
+                    end
                 elseif reenter then
                     local inactive_elevator
                     local not_return_mini = true
                     nova.log("Completionist returning")
                     for e in world:get_level():entities() do
-                        if world:get_id( e ) == "elevator_01" then   
-                            nova.log("Found elevator_01")                       
+                        if world:get_id( e ) == "elevator_01" then
+                            nova.log("Found elevator_01")
                             inactive_elevator = e:child( "elevator_inactive_completionist" )
-                        elseif world:get_id( e ) == "elevator_01_mini" and world:get_position(player) == world:get_position(e) then 
+                        elseif world:get_id( e ) == "elevator_01_mini" and world:get_position(player) == world:get_position(e) then
                             nova.log("Returned via mini level")
                             not_return_mini = false
                         end
                         if world:get_id( e ) == "elevator_01_mini" then
                             nova.log("Returned and mini level exit exists")
-                        end 
-                    end 
+                        end
+                    end
                     if inactive_elevator and not_return_mini then
                         nova.log("Elevator unlocked after return")
                         world:mark_destroy( inactive_elevator )
@@ -312,37 +312,37 @@ register_blueprint "runtime_completionist"
                     end
                     local unlocked = {1,9,17,25,26,27,29,31,33,34,37,38,41,42,45,46,49,50,53,54,57,58,61,62,65,66,69,70,73,74,77,78,88}
                     local do_lock = true
-                    for index, level in ipairs(unlocked) do                 
-                        if level == world.data.current then  
+                    for index, level in ipairs(unlocked) do
+                        if level == world.data.current then
                             do_lock = false
                         end
-                    end             
-                    if do_lock then     
+                    end
+                    if do_lock then
                         for e in world:get_level():entities() do
-                            if world:get_id( e ) == "elevator_01" then                              
-                                e:equip("elevator_inactive_completionist")            
+                            if world:get_id( e ) == "elevator_01" then
+                                e:equip("elevator_inactive_completionist")
                             end
-                        end         
+                        end
                     end
                 end
             end
-        ]]  
+        ]]
     },
 }
 
 function killOnSight(self, being, player)
     if being.data and being.data.ai.group ~= "player" then
-        if being.health.current > 0 then 
+        if being.health.current > 0 then
             being.health.current = 1
             world:get_level():apply_damage( self, being, 100, ivec2(), "pierce", player )
-        end     
+        end
     end
 end
 
 register_blueprint "runtime_murder"
 {
     flags = { EF_NOPICKUP },
-    callbacks = {       
+    callbacks = {
         on_timer = [[
             function ( self, first )
                 if first then return 49 end
@@ -382,7 +382,7 @@ register_blueprint "trial_completionist"
     },
     callbacks = {
         on_create_player = [[
-            function( self, player ) 
+            function( self, player )
                 -- player:attach( "runtime_murder" )
                 player:attach( "runtime_completionist" )
                 player:attach( "keycard_red", { stack = { amount = 3 } } )
@@ -417,19 +417,19 @@ register_world "trial_completionist"
             },
             event      = { 100, math.random_pick{2,3,5,6,4,2,3,5}, },
             generator = {
-                [5] = { 
+                [5] = {
                     "civilian_01_open",
                     "civilian_bsp_01",
                     "civilian_cogmind_01",
                     "civilian_layout_bsp_01",
                 },
-                [6] = { 
+                [6] = {
                     "civilian_01_open",
                     "civilian_bsp_01",
                     "civilian_cogmind_01",
                     "civilian_layout_bsp_01",
                 },
-                [7] = { 
+                [7] = {
                     "civilian_01_open",
                     "civilian_bsp_01",
                     "civilian_cogmind_01",
@@ -437,7 +437,7 @@ register_world "trial_completionist"
                 },
             },
             blueprint     = "level_callisto",
-            rewards       = { 
+            rewards       = {
                 "lootbox_medical",
                 { "lootbox_armor", level = 2, },
                 { "medical_station", swap = 1, level = 4, },
@@ -475,12 +475,12 @@ register_world "trial_completionist"
                 list = "europa",
             },
             generator = {
-                [6] = { 
+                [6] = {
                     "europa_ice_01",
                     "europa_ice_02",
                     "europa_ice_03",
                 },
-                [7] = { 
+                [7] = {
                     "europa_ice_01",
                     "europa_ice_02",
                     "europa_ice_03",
@@ -497,7 +497,7 @@ register_world "trial_completionist"
             },
             event      = { 100, math.random(4) + 1, },
             blueprint  = "level_europa",
-            rewards    = { 
+            rewards    = {
                 "lootbox_medical",
                 { "manufacture_station", level = 1, },
                 { "medical_station", swap = 1, level = 4, },
@@ -511,7 +511,7 @@ register_world "trial_completionist"
                 music = "music_europa_intermission",
             },
         }
-        data.level[9].blueprint = "level_europa_intro"      
+        data.level[9].blueprint = "level_europa_intro"
         data.level[10].force_terminal = true
         data.level[10].depth = 22
         data.level[11].depth = 26
@@ -560,7 +560,7 @@ register_world "trial_completionist"
             },
             event      = { 100, math.random(4) + 1, },
             blueprint = "level_io",
-            rewards   = { 
+            rewards   = {
                 "lootbox_medical",
                 { "medical_station", swap = 1, level = 4, },
                 { "technical_station", level = 1, },
@@ -614,7 +614,7 @@ register_world "trial_completionist"
             },
             event      = { 100, math.random(2) + 1, },
             blueprint = "level_beyond",
-            rewards       = { 
+            rewards       = {
                 "lootbox_medical",
                 "lootbox_ammo",
                 { "terminal_ammo", swap = 2, level = 1, },
@@ -628,7 +628,7 @@ register_world "trial_completionist"
         data.level[25].blueprint = "level_beyond_intro_completionist"
         data.level[25].generator = "beyond_intro"
         data.level[26].depth = 62
-        data.level[27].depth = 63       
+        data.level[27].depth = 63
         data.level[28].blueprint = "level_beyond_percipice_completionist"
         data.level[28].generator = "beyond_percipice_completionist"
         data.level[28].depth = 64
@@ -655,7 +655,7 @@ register_world "trial_completionist"
             },
             event      = { DIFFICULTY*25, math.random(2) + 1, },
             blueprint = "level_dante",
-            rewards       = { 
+            rewards       = {
                 "lootbox_medical",
                 "lootbox_ammo",
             },
@@ -680,7 +680,7 @@ register_world "trial_completionist"
         local mines_data = {
             name           = "Callisto Mines",
             episode        = 1,
-            depth          = 3,
+            prev           = 2,
             size           = 3,
             enemy_list     = "callisto",
             enemy_mod      = { bot = 0, drone = 0.5, demon = 2, },
@@ -743,7 +743,7 @@ register_world "trial_completionist"
                 dlevel_mod = 1,
                 returnable = true,
             },
-            
+
         }
 
         local valhalla_data = {
@@ -766,7 +766,7 @@ register_world "trial_completionist"
                 { "lootbox_armor" },
             },
             events     = {
-                "event_low_light", 
+                "event_low_light",
                 "event_desolation",
                 "event_infestation",
                 "event_hunt",
@@ -815,27 +815,31 @@ register_world "trial_completionist"
             },
         }
 
-        local call_early_branch 
-        local call_mid_branch 
+        local call_early_branch
+        local call_mid_branch
         local call_late_branch
         local call_final_branch
 
         local remain = { mines_data, valhalla_data, rift_data, mimir_data }
-        call_early_branch = table.remove( remain, math.random( #remain ) ) 
+        call_early_branch = table.remove( remain, math.random( #remain ) )
         call_early_branch.size = 3
         call_early_branch.depth = 3
-        
-        call_mid_branch = table.remove( remain, math.random( #remain ) ) 
+        call_early_branch.prev = 2
+
+        call_mid_branch = table.remove( remain, math.random( #remain ) )
         call_mid_branch.size   = 3
         call_mid_branch.depth   = 7
-        
-        call_late_branch = table.remove( remain, math.random( #remain ) ) 
+        call_mid_branch.prev = 3
+
+        call_late_branch = table.remove( remain, math.random( #remain ) )
         call_late_branch.size   = 3
         call_late_branch.depth  = 11
+        call_late_branch.prev = 4
 
-        call_final_branch = table.remove( remain, math.random( #remain ) )      
+        call_final_branch = table.remove( remain, math.random( #remain ) )
         call_final_branch.size   = 3
         call_final_branch.depth  = 15
+        call_final_branch.prev = 5
 
         data.level[2].branch = world.add_branch( call_early_branch )
         data.level[35].next = 3
@@ -998,29 +1002,32 @@ register_world "trial_completionist"
                 returnable     = true,
             },
         }
-        
-        local eur_early_branch 
-        local eur_mid_branch 
+
+        local eur_early_branch
+        local eur_mid_branch
         local eur_late_branch
         local eur_final_branch
 
         local remain = { asterius_data, ruins_data, conamara_data, dig_data }
-        eur_early_branch = table.remove( remain, math.random( #remain ) ) 
+        eur_early_branch = table.remove( remain, math.random( #remain ) )
         eur_early_branch.size = 3
         eur_early_branch.depth = 23
-        
-        eur_mid_branch = table.remove( remain, math.random( #remain ) ) 
+        eur_early_branch.prev = 10
+
+        eur_mid_branch = table.remove( remain, math.random( #remain ) )
         eur_mid_branch.size   = 3
         eur_mid_branch.depth   = 27
-        
-        eur_late_branch = table.remove( remain, math.random( #remain ) ) 
+        eur_mid_branch.prev = 11
+
+        eur_late_branch = table.remove( remain, math.random( #remain ) )
         eur_late_branch.size   = 3
         eur_late_branch.depth  = 31
+        eur_late_branch.prev  = 12
 
-        eur_final_branch = table.remove( remain, math.random( #remain ) )       
+        eur_final_branch = table.remove( remain, math.random( #remain ) )
         eur_final_branch.size   = 3
         eur_final_branch.depth  = 35
-
+        eur_final_branch.prev  = 13
         data.level[10].branch = world.add_branch( eur_early_branch )
         data.level[51].next = 11
         data.level[11].branch = world.add_branch( eur_mid_branch )
@@ -1167,28 +1174,32 @@ register_world "trial_completionist"
                 returnable     = true,
             },
         }
-        
-        local io_early_branch 
-        local io_mid_branch 
+
+        local io_early_branch
+        local io_mid_branch
         local io_late_branch
         local io_final_branch
 
         local remain = { blacksite_data, crilab_data, nox_data, halls_data }
-        io_early_branch = table.remove( remain, math.random( #remain ) ) 
+        io_early_branch = table.remove( remain, math.random( #remain ) )
         io_early_branch.size = 3
         io_early_branch.depth = 43
-        
-        io_mid_branch = table.remove( remain, math.random( #remain ) ) 
+        io_early_branch.prev = 18
+
+        io_mid_branch = table.remove( remain, math.random( #remain ) )
         io_mid_branch.size   = 3
         io_mid_branch.depth   = 47
-        
-        io_late_branch = table.remove( remain, math.random( #remain ) ) 
+        io_mid_branch.prev   = 19
+
+        io_late_branch = table.remove( remain, math.random( #remain ) )
         io_late_branch.size   = 3
         io_late_branch.depth  = 51
+        io_late_branch.prev = 20
 
-        io_final_branch = table.remove( remain, math.random( #remain ) )        
+        io_final_branch = table.remove( remain, math.random( #remain ) )
         io_final_branch.size   = 3
         io_final_branch.depth  = 55
+        io_final_branch.prev  = 21
 
         data.level[18].branch = world.add_branch( io_early_branch )
         data.level[67].next = 19
@@ -1237,7 +1248,7 @@ register_world "trial_completionist"
 
         data.level[14].special = world.add_special{
             episode        = 2,
-            depth          = 38,            
+            depth          = 38,
             prev           = 14,
             generator      = level_14[1],
             blueprint      = level_14[2],
@@ -1313,7 +1324,7 @@ register_world "trial_completionist"
             episode        = 1,
             depth          = 1,
             blueprint      = "level_cot",
-            lootbox_count  = 4,
+            lootbox_count  = 8,
             ilevel_mod     = 1,
             dlevel_mod     = 1,
             branch_index   = 1,
@@ -1326,10 +1337,10 @@ register_world "trial_completionist"
             linfo.rewards       = linfo.rewards or {}
             if linfo.lootbox_count > 0 then
                 if DIFFICULTY == 0 then
-                    linfo.lootbox_count = linfo.lootbox_count + 1 
+                    linfo.lootbox_count = linfo.lootbox_count + 1
                 elseif DIFFICULTY == 1 then
                     if math.random( 100 ) > 33 then
-                        linfo.lootbox_count = linfo.lootbox_count + 1 
+                        linfo.lootbox_count = linfo.lootbox_count + 1
                     end
                 end
             end
@@ -1348,20 +1359,20 @@ register_world "trial_completionist"
         end
         world.data.special_levels = 19
         world.data.completionist_trial = true
-        
+
         local guaranteed_uniques_cal = {2, 3, 4, 5, 6, 7}
         local guaranteed_uniques_eur = {10, 11, 12, 13, 14, 15}
         local guaranteed_uniques_io = {18, 19, 20, 21, 22, 23}
-        
+
         world.data.cal_guaranteed_unique = table.remove( guaranteed_uniques_cal, math.random( #guaranteed_uniques_cal ) )
         world.data.eur_guaranteed_unique = table.remove( guaranteed_uniques_eur, math.random( #guaranteed_uniques_eur ) )
         world.data.io_guaranteed_unique = table.remove( guaranteed_uniques_io, math.random( #guaranteed_uniques_io ) )
-        
+
         nova.log("Callisto unique on branch from "..world.data.cal_guaranteed_unique)
         nova.log("Europa unique on branch from "..world.data.eur_guaranteed_unique)
         nova.log("Io unique on branch from "..world.data.io_guaranteed_unique)
-                
-        world.data.unique.guaranteed = 0        
+
+        world.data.unique.guaranteed = 0
     end,
     on_setup = function( )
         if DIFFICULTY == 0 then
@@ -1396,46 +1407,65 @@ register_world "trial_completionist"
                 if ilist then
                     local target
                     local source
-                    if #b.index <= 4 then
-                        target  = b.index[ math.random( math.min( #b.index, 2 ) ) ]
-                        local entry   = b.index[1]                      
-                        local pbranch = world.data.branch[ b.prev_branch ]                      
-                        local epoint 
-                        for idx,id in ipairs( pbranch.index ) do                            
+                    if #b.index == 3 then
+                        target  = b.index[ math.random( 2 ) ]
+                        local entry   = b.index[1]
+                        local pbranch = world.data.branch[ b.prev_branch ]
+                        local epoint
+                        for idx,id in ipairs( pbranch.index ) do
+                            nova.log("idx, id "..idx..","..id)
+                            nova.log(tostring(b.name).." entry "..entry)
+                            nova.log("data.level[id].branch "..tostring(world.data.level[id].branch))
                             if world.data.level[id].branch == entry then
                                 epoint = idx
                                 break
                             end
                         end
-                        if epoint then
-                            local pos = 1 + math.random( epoint - 1 )
-                            source = pbranch.index[ pos ]
-                        end
+                        local pos = 1 + math.random( epoint - 1 )
+                        source = pbranch.index[ pos ]
                     else
                         target  = b.index[2 + math.random( 3 )]
                         source  = b.index[2]
                     end
                     local sid
-                    local short = true
-                    if #b.index < 3 and math.random(2) == 1 then
-                        short = false
-                    end
+                    local short = (math.random(2) == 1)
                     if short then
-                        if #b.index < 3 then
+                        nova.log("Using slist")
+                        if #b.index == 3 then
                             target = b.index[1]
                         elseif #b.index > 3 then
-                            target = b.index[6]
+                            target = b.index[5 + math.random( 2 )]
                         end
                         sid = slist:roll( world.data.level[target].depth, quest_used, true )
                     end
                     if not sid then
+                        nova.log("Using ilist")
                         sid = ilist:roll( world.data.level[target].depth, quest_used, true )
                     end
                     quest_used[sid] = 0
-                    if source then
-                        local idx = world:add_quest( player, world:create_entity( sid, target ) )
-                        table.insert( world.data.level[source].quest, idx )
-                    end 
+                    local idx = world:add_quest( player, world:create_entity( sid, target ) )
+                    nova.log("Inserting quest "..idx.." branch "..tostring(b.name).." into source"..source.." target "..target)
+                    table.insert( world.data.level[source].quest, idx )
+                end
+            end
+        end
+
+        -- extra quest for deep branches
+        for _,b in ipairs( world.data.branch ) do
+            if b.quest and b.quest.list and not b.quest.no_info then
+                local ilist = core.lists.quest_info[b.quest.list]
+                if ilist then
+                    local tgt = 3
+                    local src = 1
+                    if #b.index > 3 then -- main branch
+                        tgt = 5 + math.random( 2 )
+                        src = 1 + math.random( 4 )
+                    end
+                    local qid = ilist:roll( world.data.level[b.index[tgt]].depth, quest_used, true )
+                    quest_used[qid] = 0
+                    local idx = world:add_quest( player, world:create_entity( qid, b.index[tgt] ) )
+                    nova.log("Inserting deep quest "..idx.." branch "..tostring(b.name).." into source "..src..", target"..tgt)
+                    table.insert( world.data.level[b.index[src]].quest, idx )
                 end
             end
         end
@@ -1459,7 +1489,7 @@ register_world "trial_completionist"
             ui:post_mortem( result, true )
         end
     end,
-    on_stats = function( player, win )      
+    on_stats = function( player, win )
         if win then
             return
         end
@@ -1467,12 +1497,12 @@ register_world "trial_completionist"
     on_entity = function( entity )
         world.on_entity( entity )
         if entity.data and entity.data.ai and entity.attributes and
-                ( not entity.data.is_player ) and entity.attributes.health and 
+                ( not entity.data.is_player ) and entity.attributes.health and
                 ( not entity.data.boss ) and string.sub( world:get_id( entity ), 1, 7 ) ~= "exalted" then
             local linfo = world.data.level[ world.data.current ]
             if linfo then
                 local dlevel = linfo.dlevel or 1
-                local ep     = linfo.episode or 1               
+                local ep     = linfo.episode or 1
                 if ep > 3 and math.random( 100 ) < ( 20 + dlevel * 5 ) then
                     local count = ep - 3
                     local exalted_traits = {
@@ -1483,7 +1513,7 @@ register_world "trial_completionist"
                         { "exalted_kw_accurate", },
                         { "exalted_kw_fast", min = 12, },
                         { "exalted_kw_lethal", tag = "damage" },
-                        { "exalted_kw_deadly", min = 18, tag = "damage" }, 
+                        { "exalted_kw_deadly", min = 18, tag = "damage" },
                         { "exalted_kw_regenerate", tag = "health", min = 18, },
                     }
                     if entity.data.nightmare and entity.data.nightmare.id then
