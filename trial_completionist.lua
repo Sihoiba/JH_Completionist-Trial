@@ -95,6 +95,7 @@ register_blueprint "level_beyond_percipice_completionist"
     },
     attributes  = {
         portal      = 0,
+        summoner_dead = false,
     },
     ui_boss    = {},
     environment = {
@@ -123,6 +124,7 @@ register_blueprint "level_beyond_percipice_completionist"
             function ( self )
                 -- This is needed because the summoner adds 1 to the world enemy count every time it teleports on the health trigger.
                 if self.level_info.enemies > 2 then return 0 end
+                if not self.attributes.summoner_dead then return 0 end
                 return 1
             end
         ]],
@@ -131,8 +133,9 @@ register_blueprint "level_beyond_percipice_completionist"
                 if self.attributes.portal == 0 and killed.data.boss then
                     local e = self:place_entity( "portal_01", self:find_coord( "portal_off" ) )
                     ui:spawn_fx( nil, "fx_summon_exalted", nil, world:get_position( e ) )
+                    self.attributes.summoner_dead = true
                 end
-                if self.level_info.enemies == 2 then
+                if self.level_info.enemies == 2 and self.attributes.summoner_dead then
                     self.level_info.cleared = true
                     nova.log("Beyond precipice cleared")
                 end
@@ -1498,7 +1501,8 @@ register_world "trial_completionist"
         world.on_entity( entity )
         if entity.data and entity.data.ai and entity.attributes and
                 ( not entity.data.is_player ) and entity.attributes.health and
-                ( not entity.data.boss ) and string.sub( world:get_id( entity ), 1, 7 ) ~= "exalted" then
+                ( not entity.data.boss ) and string.sub( world:get_id( entity ), 1, 7 ) ~= "exalted" and
+                DIFFICULTY > 5 then
             local linfo = world.data.level[ world.data.current ]
             if linfo then
                 local dlevel = linfo.dlevel or 1
