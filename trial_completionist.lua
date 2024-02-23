@@ -1504,15 +1504,20 @@ register_world "trial_completionist"
                 if ep > 3 and math.random( 100 ) < ( 20 + dlevel * 5 ) then
                     local count = ep - 3
                     local exalted_traits = {
-                        { "exalted_kw_unstable", },
-                        { "exalted_kw_hunter", min = 8, },
-                        { "exalted_kw_tough", tag = "health" },
-                        { "exalted_kw_resilient", min = 15, tag = "health" },
+                        { "exalted_kw_tough",                tag = "health", },
                         { "exalted_kw_accurate", },
-                        { "exalted_kw_fast", min = 12, },
-                        { "exalted_kw_lethal", tag = "damage" },
-                        { "exalted_kw_deadly", min = 18, tag = "damage" },
-                        { "exalted_kw_regenerate", tag = "health", min = 18, },
+                        { "exalted_kw_lethal",               tag = "damage", },
+                        { "exalted_kw_resist",               tag = "resist", },
+                        { "exalted_kw_corrosive",  min = 3,  tag = "resist", },
+                        { "exalted_kw_mephitic",   min = 5,  tag = "resist", },
+                        { "exalted_kw_infernal",   min = 8,  tag = "resist", },
+                        { "exalted_kw_hunter",     min = 3, },
+                        { "exalted_kw_fast",       min = 5, },
+                        { "exalted_kw_resilient",  min = 8,  tag = "health", },
+                        { "exalted_kw_adaptive",   min = 8, },
+                        { "exalted_kw_beholder",   min = 8,  tag = "health", },
+                        { "exalted_kw_deadly",     min = 12, tag = "damage", },
+                        { "exalted_kw_regenerate", min = 12, tag = "health", },
                     }
                     if entity.data.nightmare and entity.data.nightmare.id then
                         local nid = entity.data.nightmare.id
