@@ -1,4 +1,5 @@
 nova.require "data/lua/jh/main"
+nova.require "data/lua/jh/data/generator"
 
 register_blueprint "elevator_inactive_completionist"
 {
@@ -61,7 +62,41 @@ register_blueprint "level_beyond_intro_completionist"
     callbacks = {
         on_create = [[
             function ( self )
-                generator.run( self )
+                self:resize( ivec2( 38, 38 ) )
+                self:set_styles{ "ts06_A", "ts09_A:runes", }
+                local generate = function( self, params )
+                    generator.color_set = {
+                        "ceiling_light_06",
+                        "ceiling_light_05",
+                    }
+                    generator.fill( self, "wall" )
+                    local larea = self:get_area()
+                    params.elevators = 0
+                    local result = generator.archibald_area( self, self:get_area(), beyond_intro.tileset, params )
+                    local fid = self:get_nid("floor")
+                    local wid = self:get_nid("wall")
+                    local did = self:get_nid("door_frame")
+                    generator.fill_edges( self, "wall", self:get_area() )
+                    for c in larea:shrinked(1):edges() do
+                        if self:raw_get_cell( c ) == did then
+                            self:set_cell( c, "wall" )
+                        end
+                    end
+
+                    for c in larea:edges() do
+                        if self:around( c, wid ) > 3 and self:cross_around( c, fid ) == 1 then
+                            self:set_cell( c, "wall_vent" )
+                        end
+                    end
+                    generator.generate_litter( self, larea, {
+                        litter = { "crate_01", "crate_02", "crate_03", "crate_04", "barrel_fuel", "barrel_toxin", { "forklift_01", 0.2 } },
+                        chance = 25,
+                    })
+                    result.no_elevator_check = true
+                    return result
+                end
+
+                generator.run( self, nil, generate )
             end
             ]],
         on_enter_level = [[
@@ -111,7 +146,39 @@ register_blueprint "level_beyond_percipice_completionist"
             function ( self )
                 world.data.dante_altar = world.data.dante_altar or {}
                 world.data.dante_altar.marks = {}
-                generator.run( self )
+
+                self:resize( ivec2( 70, 30 ) )
+                self:set_styles{ "ts09_A:runes" }
+
+                local generate = function( self )
+                    generator.fill( self, "gap" )
+                    local larea    = self:get_area():shrinked(7)
+                    local tileinfo = beyond_percipice_completionist.tile
+                    tileinfo.translation["S"][3] = "summoner_c"
+                    if world.data.exalted_boss or DIFFICULTY > 3 then
+                        tileinfo.translation["S"][3] = "exalted_summoner_c"
+                    end
+                    local tile  = map_tile.new( tileinfo.map, tileinfo.translation, self )
+                    tile:flip_xy()
+                    tile:place( self, larea.a, generator.placer, self )
+                    for c in self:coords( "marker3" ) do
+                        self:set_cell( c, "floor" )
+                        table.insert( world.data.dante_altar.marks, c:clone() )
+                    end
+                    return { area = larea, no_elevator_check = true }
+                end
+
+                local spawn = function( self )
+                    generator.spawn_enemies( self, 10000, {
+                        list       = core.lists.being.beyond,
+                        mod        = { bot = 0, drone = 0, former = 0 },
+                        level      = 28,
+                        safe       = "portal_off",
+                        safe_range = 7,
+                    })
+                end
+
+                generator.run( self, nil, generate, spawn )
             end
         ]],
         on_enter_level = [[
@@ -144,30 +211,22 @@ register_blueprint "level_beyond_percipice_completionist"
     }
 }
 
-register_generator "beyond_percipice_completionist"
-{
-    generate = function(self)
-        self:resize( ivec2( 70, 30 ) )
-        self:set_styles{ "ts09_A:runes" }
-        generator.fill( self, "gap" )
-        local larea = self:get_area():shrinked(7)
-
-        local boss_tile =
-        {
-            translation = {
-                ["#"] = "wall",
-                ["."] = "gap",
-                [","] = "floor",
-                ["K"] = "marker3",
-                ["'"] = { "floor", "ceiling_light_high_01_A", placement = "ceiling", },
-                ["S"] = { "floor", "ceiling_light_high_01_A", "summoner_c", placement = "ceiling", },
-                ["!"] = { "elevator_off", "elevator_01_off", placement = "floor", },
-                ["M"] = { "floor", "medkit_large" },
-                ["A"] = { "floor", "armor_blue" },
-                ["P"] = { "portal_off", "portal_01_off" },
-            },
-            map =
-        [[
+beyond_percipice_completionist = {}
+beyond_percipice_completionist.tile = {
+    translation = {
+        ["#"] = "wall",
+        ["."] = "gap",
+        [","] = "floor",
+        ["K"] = "marker3",
+        ["'"] = { "floor", "ceiling_light_high_01_A", placement = "ceiling", },
+        ["S"] = { "floor", "ceiling_light_high_01_A", "summoner_c", placement = "ceiling", },
+        ["!"] = { "elevator_off", "elevator_01_off", placement = "floor", },
+        ["M"] = { "floor", "medkit_large" },
+        ["A"] = { "floor", "armor_blue" },
+        ["P"] = { "portal_off", "portal_01_off" },
+    },
+    map =
+[[
 ..............................................,,,,,,....
 ...............................,,,,,,........,,,,,,,,...
 ...................,,,.......,,,,,,,,,,......,,#,,,,,,..
@@ -183,28 +242,7 @@ register_generator "beyond_percipice_completionist"
 ...................,,,........,,,,,,,,,......,,#,,,,,,..
 ...............................,,,,,,........,,,,,,,,...
 ..............................................,,,,,,....
-        ]],
-        }
-        if world.data.exalted_boss or DIFFICULTY > 3 then boss_tile.translation["S"][3] = "exalted_summoner_c" end
-        local tile  = map_tile.new( boss_tile.map, boss_tile.translation, self )
-        tile:flip_xy()
-        tile:place( self, larea.a, generator.placer, self )
-        for c in self:coords( "marker3" ) do
-            self:set_cell( c, "floor" )
-            table.insert( world.data.dante_altar.marks, c:clone() )
-        end
-        return { area = larea, no_elevator_check = true }
-    end,
-
-    spawn_enemies = function( self )
-        generator.spawn_enemies( self, 10000, {
-            list       = core.lists.being.beyond,
-            mod        = { bot = 0, drone = 0, former = 0 },
-            level      = 28,
-            safe       = "portal_off",
-            safe_range = 7,
-        })
-    end,
+]],
 }
 
 register_blueprint "level_dante_intro_completionist"
@@ -234,12 +272,13 @@ register_blueprint "level_dante_intro_completionist"
     callbacks = {
         on_create = [[
             function ( self )
-                generator.run( self )
+                generator.run( self, nil, dante_intro.generate, dante_intro.spawn )
             end
             ]],
         on_enter_level = [[
             function ( self, player, reenter )
                 if reenter then return end
+                ui:set_achievement( "acv_level_beyond_01" )
                 ui:alert {
                     title   = "",
                     teletype = 0,
@@ -268,7 +307,7 @@ register_blueprint "runtime_completionist"
             function ( self, player, reenter )
                 nova.log("Level: "..world:get_level().text.name.." depth: "..tostring(world:get_level().level_info.depth).." reenter "..tostring(reenter))
 
-                if world.data.current == 89 then
+                if world.data.current == 90 then
                     world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_exit_n" ))
                     world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_plate_n" ))
                     world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_exit_e" ))
@@ -313,7 +352,7 @@ register_blueprint "runtime_completionist"
                         nova.log("Unique guaranteed on next Io special encountered")
                         world.data.unique.guaranteed = 3
                     end
-                    local unlocked = {1,9,17,25,26,27,29,31,33,34,37,38,41,42,45,46,49,50,53,54,57,58,61,62,65,66,69,70,73,74,77,78,88}
+                    local unlocked = {1,9,17,25,26,27,29,31,32,34,35,38,39,42,43,46,47,50,51,54,55,58,59,62,63,66,67,70,71,74,75,78,79,89}
                     local do_lock = true
                     for index, level in ipairs(unlocked) do
                         if level == world.data.current then
@@ -419,26 +458,6 @@ register_world "trial_completionist"
                 { "event_contamination", 1.0, min_level = 5, },
             },
             event      = { 100, math.random_pick{2,3,5,6,4,2,3,5}, },
-            generator = {
-                [5] = {
-                    "civilian_01_open",
-                    "civilian_bsp_01",
-                    "civilian_cogmind_01",
-                    "civilian_layout_bsp_01",
-                },
-                [6] = {
-                    "civilian_01_open",
-                    "civilian_bsp_01",
-                    "civilian_cogmind_01",
-                    "civilian_layout_bsp_01",
-                },
-                [7] = {
-                    "civilian_01_open",
-                    "civilian_bsp_01",
-                    "civilian_cogmind_01",
-                    "civilian_layout_bsp_01",
-                },
-            },
             blueprint     = "level_callisto",
             rewards       = {
                 "lootbox_medical",
@@ -453,9 +472,14 @@ register_world "trial_completionist"
         }
         data.level[1].blueprint = "level_callisto_intro"
         data.level[2].force_terminal = true
+        if DIFFICULTY < 3 then
+            table.insert( data.level[2].rewards, 1, "lootbox_special_2" )
+        else
+            data.level[2].terminal = data.level[2].terminal or {}
+            table.insert( data.level[2].terminal, "terminal_boon" )
+        end
         data.level[3].depth = 6
         data.level[4].blueprint = "level_callisto_hub"
-        data.level[4].generator = "callisto_hub"
         data.level[4].depth = 10
         data.level[5].blueprint = "level_callisto_civilian"
         data.level[5].depth = 14
@@ -464,7 +488,6 @@ register_world "trial_completionist"
         data.level[7].blueprint = "level_callisto_civilian"
         data.level[7].depth = 19
         data.level[8].blueprint = "level_callisto_spaceport"
-        data.level[8].generator = "callisto_spaceport"
         data.level[8].depth = 20
         data.level[8].next      = 10009
 
@@ -476,18 +499,6 @@ register_world "trial_completionist"
             enemy_list = "europa",
             quest = {
                 list = "europa",
-            },
-            generator = {
-                [6] = {
-                    "europa_ice_01",
-                    "europa_ice_02",
-                    "europa_ice_03",
-                },
-                [7] = {
-                    "europa_ice_01",
-                    "europa_ice_02",
-                    "europa_ice_03",
-                },
             },
             events     = {
                 "event_low_light",
@@ -527,7 +538,6 @@ register_world "trial_completionist"
         data.level[15].blueprint = "level_europa_ice"
         data.level[15].depth = 39
         data.level[16].blueprint = "level_europa_central_dig"
-        data.level[16].generator = "europa_central_dig"
         data.level[16].depth = 40
         data.level[16].next      = 10017
 
@@ -545,11 +555,6 @@ register_world "trial_completionist"
                 [5] = { cri = 0.5, demon = 1.5 },
                 [6] = { cri = 0.5, demon = 1.5 },
                 [7] = { cri = 0.5, demon = 1.5 },
-            },
-            generator = {
-                [5] = { "io_deep_01", "io_deep_02", "io_deep_03", "io_deep_04", },
-                [6] = { "io_deep_01", "io_deep_02", "io_deep_03", "io_deep_04", },
-                [7] = { "io_deep_01", "io_deep_02", "io_deep_03", "io_deep_04", },
             },
             events     = {
                 "event_low_light",
@@ -588,7 +593,6 @@ register_world "trial_completionist"
         data.level[23].blueprint = "level_io_deep"
         data.level[23].depth = 59
         data.level[24].blueprint = "level_io_gateway"
-        data.level[24].generator = "io_gateway_01"
         data.level[24].depth = 60
         data.level[24].next      = 10025
 
@@ -605,11 +609,6 @@ register_world "trial_completionist"
                 [3] = { bot = 0, former = 0 },
             },
             enemy_list = "beyond",
-            generators = { "beyond_rocks_lava_01" },
-            generator  = {
-                [2] = { "beyond_rocks_lava_01", "beyond_rocks_01" },
-                [3] = "beyond_pre_boss_01",
-            },
             events     = {
                 { "event_exalted_summons", 3.0, },
                 { "event_hunt", 2.0, },
@@ -629,11 +628,11 @@ register_world "trial_completionist"
             },
         }
         data.level[25].blueprint = "level_beyond_intro_completionist"
-        data.level[25].generator = "beyond_intro"
         data.level[26].depth = 62
+        data.level[26].blueprint = "level_beyond"
         data.level[27].depth = 63
+        data.level[27].blueprint = "level_beyond_pre_boss"
         data.level[28].blueprint = "level_beyond_percipice_completionist"
-        data.level[28].generator = "beyond_percipice_completionist"
         data.level[28].depth = 64
         data.level[28].next      = 10029
 
@@ -641,17 +640,12 @@ register_world "trial_completionist"
             name       = "Dante Station",
             depth      = 65,
             episode    = 5,
-            size       = 4,
+            size       = 5,
             quest = {
                 no_info = true,
                 list = "dante",
             },
             enemy_list = "dante",
-            generators = { "dante_halls_01" },
-            generator = {
-                [2] = { "dante_halls_01" },
-                [3] = { "dante_coliseum_01", },
-            },
             events     = {
                 { "event_exalted_summons", 3.0, },
                 { "event_hunt", 2.0, },
@@ -673,12 +667,19 @@ register_world "trial_completionist"
         data.level[29].generator = "dante_intro"
         data.level[29].force_terminal = true
         data.level[29].lootbox_count  = 3
+        data.level[30].blueprint = "level_dante_halls"
         data.level[30].depth = 66
+        data.level[30].lootbox_table = "dante_lootbox"
+        data.level[31].blueprint = "level_dante_colosseum"
         data.level[31].depth = 67
-        data.level[32].blueprint = "level_dante_altar"
-        data.level[32].generator = "dante_altar"
+        data.level[31].lootbox_table = "dante_lootbox"
+        data.level[32].blueprint = "level_dante_rafters"
         data.level[32].depth = 68
-        data.cot.boss_index = 32
+        data.level[32].lootbox_table = "dante_lootbox"
+        data.level[33].blueprint = "level_dante_altar"
+        data.level[33].depth = 69
+        data.level[33].lootbox_table = "dante_lootbox"
+        data.cot.boss_index = 33
 
         local mines_data = {
             name           = "Callisto Mines",
@@ -705,7 +706,6 @@ register_world "trial_completionist"
             },
             event      = { 100, math.random(3), },
             special = {
-                generator      = "callisto_callisto_anomaly",
                 blueprint      = "level_callisto_anomaly",
                 ilevel_mod     = 2,
                 dlevel_mod     = 1,
@@ -740,7 +740,6 @@ register_world "trial_completionist"
             },
             event      = { 100, math.random(3), },
             special = {
-                generator  = "callisto_crevice",
                 blueprint  = "level_callisto_crevice",
                 ilevel_mod = 2,
                 dlevel_mod = 1,
@@ -776,7 +775,6 @@ register_world "trial_completionist"
             },
             event      = { 100, math.random(3), },
             special = {
-                generator  = "callisto_valhalla_command",
                 blueprint  = "level_callisto_command",
                 ilevel_mod = 2,
                 dlevel_mod = 1,
@@ -810,7 +808,6 @@ register_world "trial_completionist"
             },
             event      = { 100, math.random(3), },
             special = {
-                generator      = "callisto_calsec_central",
                 blueprint      = "level_callisto_calsec",
                 ilevel_mod     = 2,
                 dlevel_mod     = 1,
@@ -845,13 +842,13 @@ register_world "trial_completionist"
         call_final_branch.prev = 5
 
         data.level[2].branch = world.add_branch( call_early_branch )
-        data.level[35].next = 3
+        data.level[36].next = 3
         data.level[3].branch = world.add_branch( call_mid_branch )
-        data.level[39].next = 4
+        data.level[40].next = 4
         data.level[4].branch = world.add_branch( call_late_branch )
-        data.level[43].next = 5
+        data.level[44].next = 5
         data.level[5].branch = world.add_branch( call_final_branch )
-        data.level[47].next = 6
+        data.level[48].next = 6
 
         local conamara_data = {
             name           = "Conamara Chaos Biolabs",
@@ -885,7 +882,6 @@ register_world "trial_completionist"
             },
             event      = { 100, math.random(3), },
             special = {
-                generator      = "europa_containment_area",
                 blueprint      = "level_europa_containment",
                 ilevel_mod     = 3,
                 dlevel_mod     = 1,
@@ -925,7 +921,6 @@ register_world "trial_completionist"
             },
             event   = { 100, math.random(3), },
             special = {
-                generator      = "europa_tyre_outpost",
                 blueprint      = "level_europa_tyre",
                 ilevel_mod     = 3,
                 dlevel_mod     = 1,
@@ -963,7 +958,6 @@ register_world "trial_completionist"
             },
             event   = { 100, math.random(3), },
             special = {
-                generator      = "europa_asterius_breach",
                 blueprint      = "level_europa_breach",
                 ilevel_mod     = 3,
                 dlevel_mod     = 1,
@@ -1032,13 +1026,13 @@ register_world "trial_completionist"
         eur_final_branch.depth  = 35
         eur_final_branch.prev  = 13
         data.level[10].branch = world.add_branch( eur_early_branch )
-        data.level[51].next = 11
+        data.level[52].next = 11
         data.level[11].branch = world.add_branch( eur_mid_branch )
-        data.level[55].next = 12
+        data.level[56].next = 12
         data.level[12].branch = world.add_branch( eur_late_branch )
-        data.level[59].next = 13
+        data.level[60].next = 13
         data.level[13].branch = world.add_branch( eur_final_branch )
-        data.level[63].next = 14
+        data.level[64].next = 14
 
         local blacksite_data = {
             name           = "Io Black Site",
@@ -1133,7 +1127,6 @@ register_world "trial_completionist"
             },
             event   = { 100, math.random(3), },
             special = {
-                generator      = "io_noxious",
                 blueprint      = "level_io_noxious",
                 ilevel_mod     = 3,
                 dlevel_mod     = 1,
@@ -1205,26 +1198,25 @@ register_world "trial_completionist"
         io_final_branch.prev  = 21
 
         data.level[18].branch = world.add_branch( io_early_branch )
-        data.level[67].next = 19
+        data.level[68].next = 19
         data.level[19].branch = world.add_branch( io_mid_branch )
-        data.level[71].next = 20
+        data.level[72].next = 20
         data.level[20].branch = world.add_branch( io_late_branch )
-        data.level[75].next = 21
+        data.level[76].next = 21
         data.level[21].branch = world.add_branch( io_final_branch )
-        data.level[79].next = 22
+        data.level[80].next = 22
 
-        local level_6 = { "callisto_docks", "level_callisto_docks" }
-        local level_7 = { "callisto_military_barracks", "level_callisto_military" }
+        local level_6 = "level_callisto_docks"
+        local level_7 = "level_callisto_military"
         if math.random(2) == 1 then
-            level_6 = { "callisto_military_barracks", "level_callisto_military" }
-            level_7 = { "callisto_docks", "level_callisto_docks" }
+            level_6 = "level_callisto_military"
+            level_7 = "level_callisto_docks"
         end
         data.level[6].special = world.add_special{
             episode        = 1,
             depth          = 18,
             prev           = 6,
-            generator      = level_6[1],
-            blueprint      = level_6[2],
+            blueprint      = level_6,
             ilevel_mod     = 2,
             dlevel_mod     = 1,
             branch_index   = 1,
@@ -1234,27 +1226,25 @@ register_world "trial_completionist"
             episode        = 1,
             depth          = 19,
             prev           = 7,
-            generator      = level_7[1],
-            blueprint      = level_7[2],
+            blueprint      = level_7,
             ilevel_mod     = 2,
             dlevel_mod     = 1,
             branch_index   = 1,
             returnable     = true,
         }
 
-        local level_14 = { nil, "level_europa_refueling" }
-        local level_15 = { "europa_pit", "level_europa_pit" }
+        local level_14 = "level_europa_refueling"
+        local level_15 = "level_europa_pit"
         if math.random(2) ~= 1 then
-            level_14 = { "europa_pit", "level_europa_pit" }
-            level_15 = { nil, "level_europa_refueling" }
+            level_14 = "level_europa_pit"
+            level_15 = "level_europa_refueling"
         end
 
         data.level[14].special = world.add_special{
             episode        = 2,
             depth          = 38,
             prev           = 14,
-            generator      = level_14[1],
-            blueprint      = level_14[2],
+            blueprint      = level_14,
             ilevel_mod     = 3,
             dlevel_mod     = 1,
             branch_index   = 2,
@@ -1264,8 +1254,7 @@ register_world "trial_completionist"
             episode        = 2,
             depth          = 39,
             prev           = 15,
-            generator      = level_15[1],
-            blueprint      = level_15[2],
+            blueprint      = level_15,
             ilevel_mod     = 3,
             dlevel_mod     = 1,
             branch_index   = 2,
@@ -1304,7 +1293,6 @@ register_world "trial_completionist"
             episode        = 4,
             depth          = 64,
             next           = 10029,
-            generator      = "beyond_crucible",
             blueprint      = "level_beyond_crucible",
             ilevel_mod     = 3,
             dlevel_mod     = 1,
@@ -1316,7 +1304,6 @@ register_world "trial_completionist"
             episode        = 5,
             depth          = 66,
             next           = 31,
-            generator      = "dante_inferno",
             blueprint      = "level_dante_inferno",
             ilevel_mod     = 3,
             dlevel_mod     = 1,
@@ -1394,7 +1381,9 @@ register_world "trial_completionist"
         world.set_klass( gtk.get_klass_id( player ) )
     end,
     on_init = function( player )
-        world.set_klass( gtk.get_klass_id( player ) )
+        local klass_id = gtk.get_klass_id( player )
+        ui:inc_stat( "klass_"..klass_id )
+        world.set_klass( klass_id )
 
         player.statistics.data.special_levels.generated  = world.data.special_levels
         player.statistics.data.special_levels.accessible = world.data.special_levels
@@ -1475,6 +1464,7 @@ register_world "trial_completionist"
     end,
     on_end   = function( player, result )
         if result > 0 then
+            local klass_id = gtk.get_klass_id( player )
             ui:alert{
                 delay = 3000,
                 position = ivec2( -1, 18 ),
@@ -1483,8 +1473,12 @@ register_world "trial_completionist"
                 footer = " ",
                 win = true,
             }
+            ui:inc_stat( "win_klass_"..klass_id )
             world:lua_callback( player, "on_win_game" )
             world:play_voice( "vo_beyond_ending" )
+            if DIFFICULTY > 2 then
+                ui:set_achievement( "acv_difficulty_04" )
+            end
         elseif result == 0 then
             ui:post_mortem( result, true )
             ui:dead_alert()
