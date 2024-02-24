@@ -1516,7 +1516,7 @@ register_world "trial_completionist"
                         { "exalted_kw_resilient",  min = 8,  tag = "health", },
                         { "exalted_kw_adaptive",   min = 8, },
                         { "exalted_kw_beholder",   min = 8,  tag = "health", },
-                        { "exalted_kw_deadly",     min = 12, tag = "damage", },
+                        { "exalted_kw_deadly",     min = 12, tag = "damage", }, 
                         { "exalted_kw_regenerate", min = 12, tag = "health", },
                     }
                     if entity.data.nightmare and entity.data.nightmare.id then
