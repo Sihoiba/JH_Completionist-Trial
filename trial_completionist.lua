@@ -34,6 +34,8 @@ register_blueprint "elevator_inactive_completionist"
     },
 }
 
+-- BEYOND INTRO
+
 register_blueprint "level_beyond_intro_completionist"
 {
     blueprint   = "level_base",
@@ -121,6 +123,8 @@ register_blueprint "level_beyond_intro_completionist"
         ]],
     }
 }
+
+-- BEYOND PRECIPICE
 
 register_blueprint "level_beyond_percipice_completionist"
 {
@@ -245,6 +249,94 @@ beyond_percipice_completionist.tile = {
 ]],
 }
 
+-- DANTE VESTIBULE
+
+dante_intro_completionist = {}
+
+function dante_intro_completionist.generate( self, params )
+    self:resize( ivec2( 59, 31 ) )
+    self:set_styles{ "tsX_A:rand","tsX_A:deco"  }
+    generator.color_set = {
+        "ceiling_light_06",
+        "ceiling_light_05",
+    }
+    generator.fill( self, "gap" )
+    local larea  = self:get_area():shrinked(1)
+    local result = generator.archibald_area( self, larea, dante_intro.tileset, {} )
+    result.area  = larea
+    generator.map_symmetry_y( self, 15 )
+    local entry  = self:find_coord( "mark_elevator_entry" )
+    if entry then
+        self:set_cell( entry, "portal_off" )
+        self:add_entity( "portal_01_off", entry )
+        self:place_entity( "ceiling_light_05", entry )
+    end
+    local exit   = self:find_coord( "mark_elevator_exit" )
+    if exit then
+        self:set_cell( exit, "elevator" )
+        local facing = generator.floor_facing( self, exit, { [self:get_nid( "floor" )] = true, [self:get_nid( "floor_elevator" )] = true, } )
+        entity = self:place_entity( "elevator_01", exit, facing )
+    end
+
+    local coords = generator.find_coords( self, "mark_elevator" )
+    if DIFFICULTY > 0 then
+        local ecoord = table.remove( coords, math.random( #coords ) )
+        local facing = generator.floor_facing( self, ecoord, { [self:get_nid( "floor" )] = true, [self:get_nid( "floor_elevator" )] = true } )
+        self:place_entity( "elevator_01_branch", ecoord, facing )
+        self:set_cell( ecoord, "elevator_branch" )
+    end
+
+    for _, c in ipairs( coords ) do
+        self:set_cell( c, "wall" )
+    end
+
+
+    generator.checker_style( self, "gap" )
+    generator.drop_marker_rewards( self, "marker", larea, {"terminal_ammo", "terminal_ammo" } )
+
+    local cri_area = area( coord( 30, 1 ), coord( 45, 30 ) )
+    local dan_area = area( coord( 1, 1 ), coord( 20, 30 ) )
+
+
+    generator.generate_litter( self, cri_area, {
+        litter = { "crate_01", "crate_02", "crate_03", "crate_04", "barrel_fuel", { "forklift_01", 0.1 } },
+        chance = 25,
+        alt    = "altfloor",
+    })
+
+    generator.generate_litter( self, dan_area, {
+        litter = { "crate_dante", "crate_dante", "barrel_dante",
+        { "crate_dante_group", 0.2 } },
+        chance = 20,
+        alt    = "altfloor",
+    })
+    for c in self:coords( "marker3" ) do
+        self:set_cell( c, "floor" )
+        self:place_entity( "dante_obelisk_02", c, generator.env_facing( c ) )
+    end
+
+    result.no_elevator_check = true
+    return result
+end
+
+function dante_intro_completionist.spawn( self )
+    local cri_area = area( coord( 20, 1 ), coord( 40, 30 ) )
+    local dan_area = area( coord( 1, 1 ),  coord( 30, 30 ) )
+
+    local value = generator.std_exp_value()
+    generator.spawn_enemies( self, value * 0.4, {
+        list  = core.lists.being.cri,
+        mod   = { civilian = 0.2, },
+        area  = cri_area,
+        safe  = "portal_off",
+    })
+    generator.spawn_enemies( self, value * 0.7, {
+        list  = core.lists.being.dante,
+        area  = dan_area,
+        safe  = "portal_off",
+    })
+end
+
 register_blueprint "level_dante_intro_completionist"
 {
     blueprint   = "level_base",
@@ -272,7 +364,7 @@ register_blueprint "level_dante_intro_completionist"
     callbacks = {
         on_create = [[
             function ( self )
-                generator.run( self, nil, dante_intro.generate, dante_intro.spawn )
+                generator.run( self, nil, dante_intro_completionist.generate, dante_intro_completionist.spawn )
             end
             ]],
         on_enter_level = [[
@@ -299,15 +391,17 @@ register_blueprint "level_dante_intro_completionist"
     }
 }
 
+-- COMPLETIONIST DEFINITION
+
 register_blueprint "runtime_completionist"
 {
     flags = { EF_NOPICKUP },
     callbacks = {
         on_enter_level = [[
             function ( self, player, reenter )
-                nova.log("Level: "..world:get_level().text.name.." depth: "..tostring(world:get_level().level_info.depth).." reenter "..tostring(reenter))
+                nova.log("Level: "..world:get_level().text.name.." level number "..tostring(world.data.current).." depth: "..tostring(world:get_level().level_info.depth).." reenter "..tostring(reenter))
 
-                if world.data.current == 90 then
+                if world.data.current == 93 then
                     world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_exit_n" ))
                     world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_plate_n" ))
                     world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_exit_e" ))
@@ -352,7 +446,7 @@ register_blueprint "runtime_completionist"
                         nova.log("Unique guaranteed on next Io special encountered")
                         world.data.unique.guaranteed = 3
                     end
-                    local unlocked = {1,9,17,25,26,27,29,31,32,34,35,38,39,42,43,46,47,50,51,54,55,58,59,62,63,66,67,70,71,74,75,78,79,89}
+                    local unlocked = {1,9,17,25,26,27,31,32,34,35,38,39,42,43,46,47,50,51,54,55,58,59,62,63,66,67,70,71,74,75,78,79,82,92}
                     local do_lock = true
                     for index, level in ipairs(unlocked) do
                         if level == world.data.current then
@@ -653,10 +747,12 @@ register_world "trial_completionist"
             event      = { DIFFICULTY*25, math.random(2) + 1, },
             blueprint = "level_dante",
             rewards       = {
-                "lootbox_medical",
-                "lootbox_ammo",
+                "dante_lootbox_medical",
+                "dante_lootbox_ammo",
+                { math.random_pick{  "dante_medical_station", "dante_technical_station", "dante_lootbox_special_2", "dante_lootbox_armor" }, level = 3, }
             },
             lootbox_count = 4,
+            lootbox_table = "dante_lootbox",
             intermission = {
                 scene     = "intermission_dante",
                 music     = "music_main_01",
@@ -664,21 +760,17 @@ register_world "trial_completionist"
             },
         }
         data.level[29].blueprint = "level_dante_intro_completionist"
-        data.level[29].generator = "dante_intro"
         data.level[29].force_terminal = true
         data.level[29].lootbox_count  = 3
+        data.level[22].lootbox_table = nil
         data.level[30].blueprint = "level_dante_halls"
-        data.level[30].depth = 66
-        data.level[30].lootbox_table = "dante_lootbox"
+        data.level[30].depth = 69
         data.level[31].blueprint = "level_dante_colosseum"
-        data.level[31].depth = 67
-        data.level[31].lootbox_table = "dante_lootbox"
+        data.level[31].depth = 70
         data.level[32].blueprint = "level_dante_rafters"
-        data.level[32].depth = 68
-        data.level[32].lootbox_table = "dante_lootbox"
+        data.level[32].depth = 71
         data.level[33].blueprint = "level_dante_altar"
-        data.level[33].depth = 69
-        data.level[33].lootbox_table = "dante_lootbox"
+        data.level[33].depth = 72
         data.cot.boss_index = 33
 
         local mines_data = {
@@ -907,11 +999,6 @@ register_world "trial_completionist"
                 "lootbox_medical",
                 { "medical_station", swap = 1, },
                 { "lootbox_armor" },
-            },
-            generators     = {
-                "europa_caves_01",
-                "europa_caves_02",
-                "europa_caves_03",
             },
             events     = {
                 { "event_hunt",  3.0, },
@@ -1206,6 +1293,42 @@ register_world "trial_completionist"
         data.level[21].branch = world.add_branch( io_final_branch )
         data.level[80].next = 22
 
+        local ossuary_data = {
+            name           = "Ossuary",
+            episode        = 4,
+            depth          = 66,
+            size           = 2,
+            enemy_list     = "dante",
+            enemy_mod      = { demon = 2.0 },
+
+            blueprint      = "level_dante_ossuary",
+            dlevel_mod     = 1,
+            lootbox_count  = 4,
+            quest = {
+                no_info = true,
+                list = "dante",
+            },
+            rewards       = {
+                "dante_lootbox_medical",
+                "dante_lootbox_ammo",
+            },
+            events     = {
+                { "event_exalted_summons", 3.0, },
+                { "event_hunt", 2.0, },
+            },
+            lootbox_table = "dante_lootbox",
+            event      = { DIFFICULTY*25, math.random(2), },
+            special = {
+                blueprint      = "level_ossuary_abattoir",
+                ilevel_mod     = 3,
+                dlevel_mod     = 1,
+                returnable     = true,
+            },
+        }
+
+        data.level[29].branch = world.add_branch( ossuary_data )
+        data.level[83].next = 30
+
         local level_6 = "level_callisto_docks"
         local level_7 = "level_callisto_military"
         if math.random(2) == 1 then
@@ -1302,7 +1425,7 @@ register_world "trial_completionist"
 
         data.level[30].special = world.add_special{
             episode        = 5,
-            depth          = 66,
+            depth          = 69,
             next           = 31,
             blueprint      = "level_dante_inferno",
             ilevel_mod     = 3,
@@ -1516,7 +1639,7 @@ register_world "trial_completionist"
                         { "exalted_kw_resilient",  min = 8,  tag = "health", },
                         { "exalted_kw_adaptive",   min = 8, },
                         { "exalted_kw_beholder",   min = 8,  tag = "health", },
-                        { "exalted_kw_deadly",     min = 12, tag = "damage", }, 
+                        { "exalted_kw_deadly",     min = 12, tag = "damage", },
                         { "exalted_kw_regenerate", min = 12, tag = "health", },
                     }
                     if entity.data.nightmare and entity.data.nightmare.id then
