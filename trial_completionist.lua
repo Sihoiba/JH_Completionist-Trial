@@ -461,6 +461,7 @@ register_blueprint "runtime_completionist"
                         end
                     end
                 end
+                nova.log("Runtime completionist completed successfully")
             end
         ]]
     },
@@ -554,6 +555,8 @@ register_world "trial_completionist"
             event      = { 100, math.random_pick{2,3,5,6,4,2,3,5}, },
             blueprint     = "level_callisto",
             rewards       = {
+                { { "pipe_wrench", stash = true }, level = 2, },
+                { { "crowbar", stash = true }, level = 6, },
                 "lootbox_medical",
                 { "lootbox_armor", level = 2, },
                 { "medical_station", swap = 1, level = 4, },
@@ -607,6 +610,7 @@ register_world "trial_completionist"
             blueprint  = "level_europa",
             rewards    = {
                 "lootbox_medical",
+                { { "axe", stash = true }, level = 2, },
                 { "manufacture_station", level = 1, },
                 { "medical_station", swap = 1, level = 4, },
                 { "technical_station", level = 2, },
@@ -664,8 +668,11 @@ register_world "trial_completionist"
             blueprint = "level_io",
             rewards   = {
                 "lootbox_medical",
+                { { "chainsaw", stash = true }, level = 2, },
+                { { "rail_rifle", stash = true }, level = 3, },
                 { "medical_station", swap = 1, level = 4, },
                 { "technical_station", level = 1, },
+                { { "energy_cannon", stash = true }, level = 6, },
                 { "lootbox_armor", level = 2, },
             },
             lootbox_count = 4,
