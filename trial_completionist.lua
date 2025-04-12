@@ -1,5 +1,10 @@
 nova.require "data/lua/jh/main"
 nova.require "data/lua/jh/data/generator"
+nova.require "completionist_levels/callisto/mimir/mimir_central_overrides"
+nova.require "completionist_levels/callisto/valhalla/valhalla_command_overrides"
+nova.require "completionist_levels/callisto/rift/rift_crevice_overrides"
+nova.require "completionist_levels/europa/europa_pit_overrides"
+nova.require "completionist_levels/europa/europa_refueling_overrides"
 
 register_blueprint "elevator_inactive_completionist"
 {
@@ -111,7 +116,7 @@ register_blueprint "runtime_completionist"
 }
 
 function killOnSight(self, being, player)
-    if being.data and being.data.ai.group ~= "player" then
+    if being.data and being.data.ai.group ~= "player" and not being.data.is_mechanical then
         if being.health.current > 0 then
             being.health.current = 1
             world:get_level():apply_damage( self, being, 100, ivec2(), "pierce", player )
@@ -151,7 +156,7 @@ register_blueprint "trial_completionist"
 {
     text = {
         name        = "Completionist",
-        desc        = "{!COMPLETIONIST MOD}\nYou not going to rest until have seen every last part of every single base accross Jupiter and its moons.\n\n You will visit every single floor, every branch (all four!) and every special level (every single one!) on every moon.\nIn order to ensure you do normal elevators are locked when a branch exit is available, and Callisto, Europa and IO each have an extra floor to fit everything in.\n\nReccommended to install the additional enemy mods to keep the variety more interesting and the threats more than just load and load of medusae!",
+        desc        = "{!COMPLETIONIST MOD}\nYou not going to rest until have seen every last part of every single base accross Jupiter and its moons.\n\nYou will visit every single floor, every branch (all four!) and every special level (every single one!) on every moon.\nIn order to ensure you do normal elevators are locked when a branch exit is available, and Callisto, Europa and IO each have an extra floor to fit everything in. Purgatory is visitable but not explorable.\n\nReccommended to install the additional enemy mods to keep the variety more interesting and the threats more than just load and load of medusae!",
         abbr        = "Comp",
         mortem_line = "He wanted to see everything!"
     },
@@ -163,7 +168,7 @@ register_blueprint "trial_completionist"
     callbacks = {
         on_create_player = [[
             function( self, player )
-                -- player:attach( "runtime_murder" )
+                player:attach( "runtime_murder" )
                 player:attach( "runtime_completionist" )
                 player:attach( "keycard_red", { stack = { amount = 3 } } )
             end
@@ -462,7 +467,7 @@ register_world "trial_completionist"
             size           = 3,
             enemy_list     = "callisto",
             enemy_mod      = { bot = 0, drone = 0.5, demon = 2, },
-            blueprint      = "level_callisto_rift",
+            blueprint      = "level_callisto_rift_completionist",
             lootbox_count  = 4,
             quest = {
                 list   = "callisto",
@@ -482,7 +487,7 @@ register_world "trial_completionist"
             },
             event      = { 100, math.random(3), },
             special = {
-                blueprint  = "level_callisto_crevice",
+                blueprint  = "level_callisto_crevice_completionist",
                 ilevel_mod = 2,
                 dlevel_mod = 1,
                 returnable = true,
@@ -517,7 +522,7 @@ register_world "trial_completionist"
             },
             event      = { 100, math.random(3), },
             special = {
-                blueprint  = "level_callisto_command",
+                blueprint  = "level_callisto_command_completionist",
                 ilevel_mod = 2,
                 dlevel_mod = 1,
                 returnable = true,
@@ -550,7 +555,7 @@ register_world "trial_completionist"
             },
             event      = { 100, math.random(3), },
             special = {
-                blueprint      = "level_callisto_calsec",
+                blueprint      = "level_callisto_calsec_completionist",
                 ilevel_mod     = 2,
                 dlevel_mod     = 1,
                 returnable     = true,
@@ -1006,11 +1011,11 @@ register_world "trial_completionist"
             returnable     = true,
         }
 
-        local level_14 = "level_europa_refueling"
-        local level_15 = "level_europa_pit"
+        local level_14 = "level_europa_refueling_completionist"
+        local level_15 = "level_europa_pit_completionist"
         if math.random(2) ~= 1 then
-            level_14 = "level_europa_pit"
-            level_15 = "level_europa_refueling"
+            level_14 = "level_europa_pit_completionist"
+            level_15 = "level_europa_refueling_completionist"
         end
 
         data.level[14].special = world.add_special{

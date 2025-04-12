@@ -9,7 +9,7 @@ Completion Trial. Like a normal game except you get to (and have to) visit every
 
 Visit Callisto, Europa, Io, Beyond and Dante. Fight both the Summoner and the Harbinger. Achieve every branch mechanic if you can!
 
-Callisto, Europa and Io are all 8 levels deep. On each moon all four branches will spawn and will be 3 levels deep, and both the main branch special levels are accessible. Branches and special level is order is randomised much like a normal seed.
+Callisto, Europa and Io are all 8 levels deep. On each moon all four branches will spawn and will be 3 levels deep, and both the main branch special levels are accessible. Purgatory can be visited but not explored. Branches and special level is order is randomised much like a normal seed.
 
 Normal elevators are locked if there is a branch elevator, so you have to visit every branch; though you can still and skip the special levels if you don't like fun.
 

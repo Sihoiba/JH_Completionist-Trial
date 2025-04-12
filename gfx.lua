@@ -1,2 +1,5 @@
 nova.require "data/lua/gfx/common"
-nova.require "enemy_gfx/summoner_c"
+nova.require "completionist_gfx/summoner_c"
+nova.require "completionist_gfx/mimir"
+nova.require "completionist_gfx/rift"
+nova.require "completionist_gfx/europa"
