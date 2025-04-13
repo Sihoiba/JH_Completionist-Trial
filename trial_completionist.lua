@@ -168,9 +168,16 @@ register_blueprint "trial_completionist"
     callbacks = {
         on_create_player = [[
             function( self, player )
-                player:attach( "runtime_murder" )
+                -- player:attach( "runtime_murder" )
                 player:attach( "runtime_completionist" )
                 player:attach( "keycard_red", { stack = { amount = 3 } } )
+            end
+        ]],
+        on_mortem = [[
+            function( self, player, win )
+                local stats     = world:get_player().statistics
+                local completed = (stats.data.special_levels.completed() or 0 )
+
             end
         ]],
     },
@@ -1262,9 +1269,7 @@ register_world "trial_completionist"
         end
     end,
     on_stats = function( player, win )
-        if win then
-            return
-        end
+        world.award_medals( player, win, { "visit", "time", "turns" }  )
     end,
     on_entity = function( entity )
         world.on_entity( entity )
