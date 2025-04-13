@@ -152,6 +152,66 @@ register_blueprint "runtime_murder"
     },
 }
 
+register_blueprint "badge_completionist1"
+{
+    text = {
+        name  = "Completionist Bronze Badge",
+        desc  = "Complete completionist",
+    },
+    badge = {
+        group = "trial_completionist",
+        level = 1,
+    },
+}
+
+register_blueprint "badge_completionist2"
+{
+    text = {
+        name  = "Completionist Silver Badge",
+        desc  = "Complete Completionist on Hard+",
+    },
+    badge = {
+        group = "trial_completionist",
+        level = 2,
+    },
+}
+
+register_blueprint "badge_completionist3"
+{
+    text = {
+        name  = "Completionist Gold Badge",
+        desc  = "Complete Completionist on UV+",
+    },
+    badge = {
+        group = "trial_completionist",
+        level = 3,
+    },
+}
+
+register_blueprint "badge_completionist4"
+{
+    text = {
+        name  = "Completionist Platinum Badge",
+        desc  = "Complete Completionist Trial on Nightmare including all special levels+",
+    },
+    badge = {
+        group = "trial_completionist",
+        level = 4,
+    },
+}
+
+register_blueprint "badge_completionist5"
+{
+    text = {
+        name  = "Completionist Diamond Badge",
+        desc  = "Complete Completionist Trial on Inferno! including all special levels",
+    },
+    badge = {
+        group = "trial_completionist",
+        level = 5,
+    },
+}
+
 register_blueprint "trial_completionist"
 {
     text = {
@@ -177,7 +237,22 @@ register_blueprint "trial_completionist"
             function( self, player, win )
                 local stats     = world:get_player().statistics
                 local completed = (stats.data.special_levels.completed() or 0 )
-
+                nova.log("specials visited, specials completed "..tostring(stats.data.special_levels.visited())..","..tostring(stats.data.special_levels.completed()))
+                if win then
+                    world.award_badge( player, "badge_completionist1" )
+                    if DIFFICULTY > 1 then
+                        world.award_badge( player, "badge_completionist2" )
+                        if DIFFICULTY > 2 then
+                            world.award_badge( player, "badge_completionist3" )
+                            if DIFFICULTY > 3 and completed == 21 then
+                                world.award_badge( player, "badge_completionist4" )
+                                if DIFFICULTY > 5 then
+                                    world.award_badge( player, "badge_completionist5" )
+                                end
+                            end
+                        end
+                    end
+                end
             end
         ]],
     },
@@ -1132,7 +1207,7 @@ register_world "trial_completionist"
             nova.log("data.level"..tostring(idx)..(linfo.name))
             nova.log("data.level.next"..tostring(linfo.next))
         end
-        world.data.special_levels = 19
+        world.data.special_levels = 21
         world.data.completionist_trial = true
 
         local guaranteed_uniques_cal = {2, 3, 4, 5, 6, 7}
