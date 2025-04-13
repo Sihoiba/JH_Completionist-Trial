@@ -1,5 +1,5 @@
 nova.require "data/lua/jh/data/generator"
-nova.require "completionist_levels/callisto/rift/rift_common_overrides"
+nova.require "completionist_levels/rift_common_overrides"
 nova.require "data/lua/jh/data/levels/callisto/rift/rift_crevice"
 
 

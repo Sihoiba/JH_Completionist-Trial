@@ -1,6 +1,6 @@
 nova.require "data/lua/jh/data/generator"
-nova.require "completionist_levels/callisto/mimir/mimir_common_overrides"
-nova.require "completionist_levels/callisto/valhalla/valhalla_command_overrides"
+nova.require "completionist_levels/mimir_common_overrides"
+nova.require "completionist_levels/valhalla_command_overrides"
 nova.require "data/lua/jh/data/levels/callisto/mimir/mimir_common"
 nova.require "data/lua/jh/data/levels/callisto/mimir/mimir_central"
 nova.require "data/lua/jh/data/levels/callisto/mimir/mimir_tilesets"	

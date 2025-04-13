@@ -1,10 +1,10 @@
 nova.require "data/lua/jh/main"
 nova.require "data/lua/jh/data/generator"
-nova.require "completionist_levels/callisto/mimir/mimir_central_overrides"
-nova.require "completionist_levels/callisto/valhalla/valhalla_command_overrides"
-nova.require "completionist_levels/callisto/rift/rift_crevice_overrides"
-nova.require "completionist_levels/europa/europa_pit_overrides"
-nova.require "completionist_levels/europa/europa_refueling_overrides"
+nova.require "completionist_levels/mimir_central_overrides"
+nova.require "completionist_levels/valhalla_command_overrides"
+nova.require "completionist_levels/rift_crevice_overrides"
+nova.require "completionist_levels/europa_pit_overrides"
+nova.require "completionist_levels/europa_refueling_overrides"
 
 register_blueprint "elevator_inactive_completionist"
 {
