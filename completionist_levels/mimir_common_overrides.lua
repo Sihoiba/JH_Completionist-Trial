@@ -39,7 +39,7 @@ register_blueprint "mimir_sentry_bot_completionist"
                 if self.attributes.mdf then
                     local player  = world:get_player()
                     local runtime = player:child("mimir_shutdown_runtime_completionist")
-                    if runtime and runtime.attributes.counter > 0 then 
+                    if runtime and runtime.attributes.counter > 0 then
                         runtime.attributes.counter = runtime.attributes.counter - 1
                     end
                 end

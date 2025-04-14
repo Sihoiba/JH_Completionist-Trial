@@ -25,11 +25,15 @@ register_blueprint "rift_perm_level_completionist"
                     local level = world:get_level()
                     for _=1,count do
                         local c
+                        local tries = 0
                         repeat
                             c = generator.random_safe_spawn_coord( level, level:get_area(), who, 8 )
-                        until not level:get_entity(c)
-                        local ent = world:create_entity( "toxic_smoke_cloud" )
-                        level:drop_entity( ent , c )
+                            tries = tries + 1
+                        until not level:get_entity(c) or tries > 99
+                        if not level:get_entity(c) then
+                            local ent = world:create_entity( "toxic_smoke_cloud" )
+                            level:drop_entity( ent , c )
+                        end
                     end
                 end
             end
@@ -84,11 +88,15 @@ register_blueprint "rift_switch_completionist"
                     local ppos  = world:get_position( who )
                     for _=1,count do
                         local c
+                        local tries = 0
                         repeat
                             c = generator.random_safe_spawn_coord( level, level:get_area(), who, 8 )
-                        until not level:get_entity(c)
-                        local ent = world:create_entity( "toxic_smoke_cloud" )
-                        level:drop_entity( ent , c )
+                            tries = tries + 1
+                        until not level:get_entity(c) or tries > 99
+                        if not level:get_entity(c) then
+                            local ent = world:create_entity( "toxic_smoke_cloud" )
+                            level:drop_entity( ent , c )
+                        end
                     end
                     return 1
                 else

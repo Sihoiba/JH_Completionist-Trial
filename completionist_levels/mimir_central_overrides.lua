@@ -3,7 +3,7 @@ nova.require "completionist_levels/mimir_common_overrides"
 nova.require "completionist_levels/valhalla_command_overrides"
 nova.require "data/lua/jh/data/levels/callisto/mimir/mimir_common"
 nova.require "data/lua/jh/data/levels/callisto/mimir/mimir_central"
-nova.require "data/lua/jh/data/levels/callisto/mimir/mimir_tilesets"	
+nova.require "data/lua/jh/data/levels/callisto/mimir/mimir_tilesets"
 
 register_blueprint "mimir_shutdown_runtime_completionist"
 {
@@ -20,7 +20,7 @@ register_blueprint "mimir_shutdown_runtime_completionist"
                 if current.episode > 1 then
                     world:mark_destroy( self )
                     return
-                end                
+                end
             end
         ]=],
         on_timer = [[
@@ -46,7 +46,7 @@ register_blueprint "mimir_shutdown_runtime_completionist"
                     end
                     local summon = level:add_entity( "mimir_sentry_bot_completionist", level.level_info.entry )
                     world:destroy( summon:child( "mimir_terminal_download" ) )
-                    aitk.convert( summon, entity, true, true )
+                    aitk.convert( summon, world:get_player(), true, true )
                     summon.attributes.mdf = 1
                     local ai = summon.data.ai
                     ai.state = "idle"
@@ -82,7 +82,7 @@ register_blueprint "mimir_terminal_mdf_completionist"
             function( self, who, level )
                 local ids = { mimir_sentry_bot_completionist = true, }
                 local counter = 0
-                for e in level:entities() do 
+                for e in level:entities() do
                     if level:is_alive(e) then
                         if e.data and e.data.ai and e.data.ai.group ~= "player" then
                             if ids[ world:get_id( e ) ] then
@@ -96,8 +96,8 @@ register_blueprint "mimir_terminal_mdf_completionist"
                 if runtime then
                     runtime.attributes.counter = counter
                 end
-				
-				local common_runtime = who:child( "common_shutdown_runtime_completionist" )
+
+                local common_runtime = who:child( "common_shutdown_runtime_completionist" )
                 if runtime then
                     runtime.attributes.mimir_tier = 2
                 end
@@ -106,9 +106,9 @@ register_blueprint "mimir_terminal_mdf_completionist"
                 world:destroy( self )
                 ui:activate_terminal( who, parent )
                 return 100
-            end	
+            end
         ]=]
-    }, 
+    },
 }
 
 register_blueprint "mimir_terminal_shutdown_completionist"
@@ -128,15 +128,15 @@ register_blueprint "mimir_terminal_shutdown_completionist"
     callbacks = {
         on_activate = [=[
             function( self, who, level )
-				local common_runtime = who:child( "common_shutdown_runtime_completionist" )
+                local common_runtime = who:child( "common_shutdown_runtime_completionist" )
                 if not common_runtime then
-					local runtime = who:attach( "common_shutdown_runtime_completionist" )
-					runtime.attributes.mimir_tier = 1
-				else
-					common_runtime.attributes.mimir_tier = 1
+                    local runtime = who:attach( "common_shutdown_runtime_completionist" )
+                    runtime.attributes.mimir_tier = 1
+                else
+                    common_runtime.attributes.mimir_tier = 1
                 end
-				who:attach( "mimir_shutdown_runtime_completionist" )                
-                for e in level:entities() do 
+                who:attach( "mimir_shutdown_runtime_completionist" )
+                for e in level:entities() do
                     if e.minimap and e.flags and ( e.flags.data[ EF_TARGETABLE ] or e.flags.data[ EF_ACTION ] ) then
                         if e.data and e.data.ai and e.data.ai.group ~= "player" and e.data.is_mechanical then
                             aitk.disable( e, who )
@@ -148,9 +148,9 @@ register_blueprint "mimir_terminal_shutdown_completionist"
                 parent:attach( "mimir_terminal_mdf_completionist" )
                 ui:activate_terminal( who, parent )
                 return 100
-            end	
+            end
         ]=]
-    }, 
+    },
 }
 
 mimir_central_completionist = {}
@@ -176,7 +176,7 @@ function mimir_central_completionist.generate( self, params )
     for c in self:coords( "marker2" ) do
         self:set_cell( c, "floor" )
         local sb = self:add_entity( "mimir_sentry_bot_completionist", c )
-        world:destroy( sb:child( "mimir_terminal_download" ) ) 
+        world:destroy( sb:child( "mimir_terminal_download" ) )
 
         local ai = sb.data.ai
         ai.idle  = "wait_and_idle_unless_attacked"
@@ -208,7 +208,7 @@ function mimir_central_completionist.generate( self, params )
     end
 
     generator.handle_doors( self, self:get_area(), "marker", "red_locked", { block = true } )
-    
+
     do
         local c = self:find_coord( "mark_turret" )
         self:set_cell( c, "floor" )
@@ -268,7 +268,7 @@ end
 register_blueprint "level_callisto_calsec_completionist"
 {
     blueprint   = "level_base",
-	text        = {
+    text        = {
         name        = "MDF Central",
     },
     attributes  = {
@@ -281,7 +281,7 @@ register_blueprint "level_callisto_calsec_completionist"
     level_info = {
         returnable = true,
     },
-	callbacks = {
+    callbacks = {
         on_create = [[
             function ( self )
                 local attr = self.attributes
@@ -294,7 +294,7 @@ register_blueprint "level_callisto_calsec_completionist"
         on_enter_level = [[
             function ( self, player, reenter )
                 if reenter then
-                    for e in self:entities() do 
+                    for e in self:entities() do
                         if world:get_id( e ) == "mimir_sentry_bot_completionist" then
                             if e.listen then
                                 e.listen.active = false
@@ -339,7 +339,7 @@ register_blueprint "level_callisto_calsec_completionist"
                                 attr.spawn_count = attr.spawn_count - 1
                                 local list  = {}
                                 local level = world:get_level()
-                                for e in level:entities() do 
+                                for e in level:entities() do
                                     if e.flags and e.data and ( not e.flags.data[ EF_TARGETABLE ] ) and e.flags.data[ EF_ACTION ] and e.data.ai and e.data.ai.group ~= "player" then
                                         if world:get_id( e ) == "mimir_sentry_bot_completionist" then
                                             table.insert( list, e )
@@ -365,7 +365,7 @@ register_blueprint "level_callisto_calsec_completionist"
             function ( level, entity )
                 generator.apply_manufacturer( entity, "man_mdf" )
             end
-        ]],        
+        ]],
     }
 }
 
