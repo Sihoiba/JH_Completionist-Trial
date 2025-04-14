@@ -22,7 +22,7 @@ function gtk.place_flames( p, amount, delay, flame_info )
                     ui:run_visual_event( pool, "set_value", "burning2", { component = "particle_emitter_node", key = "active", value = false, } )
                 end
             else
-                nova.log("Place flames failed to create flames")
+                nova.log("ERROR: Place flames failed to create flames")
             end
         else
             pool.attributes.amount = math.max( pool.attributes.amount, amount )
@@ -30,3 +30,61 @@ function gtk.place_flames( p, amount, delay, flame_info )
     end
 end
 
+function gtk.place_smoke( c, duration )
+    gtk.remove_fire( c )
+    local level = world:get_level()
+    world:destroy( level:entity_find( c, "toxic_smoke" ) )
+    world:destroy( level:entity_find( c, "freeze_smoke" ) )
+    world:destroy( level:entity_find( c, "toxic_smoke_cloud" ) )
+    world:destroy( level:entity_find( c, "freeze_smoke_cloud" ) )
+    local smoke = level:get_entity( c, "smoke" )
+    if not smoke then
+        smoke = level:place_entity( "smoke", c )
+    end
+    if smoke then
+        world:set_scent( c, 0 )
+        smoke.lifetime.time_left = math.max( smoke.lifetime.time_left, duration )
+    else
+        nova.log("ERROR: Place smoke failed to create smoke")
+    end
+end
+
+function gtk.place_toxic_smoke( c, duration, amount )
+    gtk.remove_fire( c )
+    local level = world:get_level()
+    world:destroy( level:entity_find( c, "smoke" ) )
+    world:destroy( level:entity_find( c, "freeze_smoke" ) )
+    world:destroy( level:entity_find( c, "smoke_cloud" ) )
+    world:destroy( level:entity_find( c, "freeze_smoke_cloud" ) )
+    local smoke = level:get_entity( c, "toxic_smoke" )
+    if not smoke then
+        smoke = level:place_entity( "toxic_smoke", c )
+    end
+    if smoke then
+        world:set_scent( c, 0 )
+        smoke.attributes.poison_amount = math.max( smoke.attributes.poison_amount, amount )
+        smoke.lifetime.time_left       = math.max( smoke.lifetime.time_left, duration )
+    else
+        nova.log("ERROR: Place toxic smoke failed to create smoke")
+    end
+end
+
+function gtk.place_freeze_smoke( c, duration, amount )
+    gtk.remove_fire( c )
+    local level = world:get_level()
+    world:destroy( level:entity_find( c, "smoke" ) )
+    world:destroy( level:entity_find( c, "smoke_cloud" ) )
+    world:destroy( level:entity_find( c, "toxic_smoke" ) )
+    world:destroy( level:entity_find( c, "toxic_smoke_cloud" ) )
+    local smoke = level:get_entity( c, "freeze_smoke" )
+    if not smoke then
+        smoke = level:place_entity( "freeze_smoke", c )
+    end
+    if smoke then
+        world:set_scent( c, 0 )
+        smoke.attributes.cold_amount = math.max( smoke.attributes.cold_amount, amount )
+        smoke.lifetime.time_left     = math.max( smoke.lifetime.time_left, duration )
+    else
+        nova.log("ERROR: Place freeze smoke failed to create smoke")
+    end
+end
