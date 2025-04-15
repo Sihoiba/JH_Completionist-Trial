@@ -1154,7 +1154,7 @@ register_world "trial_completionist"
             episode        = 4,
             depth          = 64,
             next           = 10029,
-            blueprint      = "level_beyond_crucible",
+            blueprint      = "level_beyond_crucible_completionist",
             ilevel_mod     = 3,
             dlevel_mod     = 1,
             branch_index   = 4,

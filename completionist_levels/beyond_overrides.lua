@@ -1,4 +1,5 @@
 nova.require "data/lua/jh/main"
+nova.require "data/lua/jh/data/levels/beyond/beyond_crucible"
 
 -- BEYOND INTRO
 

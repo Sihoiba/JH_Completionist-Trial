@@ -1,6 +1,7 @@
 nova.require "enemy_data/summoner_c"
 nova.require "core_overrides"
 nova.require "completionist_levels/beyond_overrides"
+nova.require "completionist_levels/beyond_crucible_overrides"
 nova.require "completionist_levels/dante_overrides"
 nova.require "completionist_levels/rift_common_overrides"
 nova.require "completionist_levels/rift_crevice_overrides"
