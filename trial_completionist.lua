@@ -180,7 +180,7 @@ register_blueprint "badge_completionist3"
 {
     text = {
         name  = "Completionist Gold Badge",
-        desc  = "Complete Completionist on UV+",
+        desc  = "Complete Completionist on UV+ & clear all special levels",
     },
     badge = {
         group = "trial_completionist",
@@ -192,7 +192,7 @@ register_blueprint "badge_completionist4"
 {
     text = {
         name  = "Completionist Platinum Badge",
-        desc  = "Complete Completionist Trial on Nightmare including all special levels+",
+        desc  = "Complete Completionist Trial on N!+ & clear all special levels & 100% kills",
     },
     badge = {
         group = "trial_completionist",
@@ -204,7 +204,7 @@ register_blueprint "badge_completionist5"
 {
     text = {
         name  = "Completionist Diamond Badge",
-        desc  = "Complete Completionist Trial on Inferno! including all special levels",
+        desc  = "Complete Completionist Trial on I! & clear all special levels & 100% kills",
     },
     badge = {
         group = "trial_completionist",
@@ -216,7 +216,7 @@ register_blueprint "trial_completionist"
 {
     text = {
         name        = "Completionist",
-        desc        = "{!COMPLETIONIST MOD}\nYou not going to rest until have seen every last part of every single base accross Jupiter and its moons.\n\nYou will visit every single floor, every branch (all four!) and every special level (every single one!) on every moon.\nIn order to ensure you do normal elevators are locked when a branch exit is available, and Callisto, Europa and IO each have an extra floor to fit everything in. Purgatory is visitable but not explorable.\n\nReccommended to install the additional enemy mods to keep the variety more interesting and the threats more than just load and load of medusae!",
+        desc        = "{!COMPLETIONIST MOD}\nYou not going to rest until have seen every last part of every single base accross Jupiter and its moons.\n\nVisit every single floor, every branch (all four!) and every special level (every single one!) on every moon. Normal elevators are locked if a branch exit exists. Callisto, Europa and IO each have an extra floor to fit everything in. Purgatory is visitable but not explorable.",
         abbr        = "Comp",
         mortem_line = "He wanted to see everything!"
     },
@@ -238,13 +238,14 @@ register_blueprint "trial_completionist"
                 local stats     = world:get_player().statistics
                 local completed = (stats.data.special_levels.completed() or 0 )
                 nova.log("specials visited, specials completed "..tostring(stats.data.special_levels.visited())..","..tostring(stats.data.special_levels.completed()))
+                nova.log("kills total, kills max "..tostring(player.statistics.data.kills_total())..","..tostring(player.statistics.data.kills_max()))
                 if win then
                     world.award_badge( player, "badge_completionist1" )
                     if DIFFICULTY > 1 then
                         world.award_badge( player, "badge_completionist2" )
-                        if DIFFICULTY > 2 then
+                        if DIFFICULTY > 2 and completed == 21 then
                             world.award_badge( player, "badge_completionist3" )
-                            if DIFFICULTY > 3 and completed == 21 then
+                            if DIFFICULTY > 3 and ( player.statistics.data.kills_total() or 0 ) >= player.statistics.data.kills_max() then
                                 world.award_badge( player, "badge_completionist4" )
                                 if DIFFICULTY > 5 then
                                     world.award_badge( player, "badge_completionist5" )
@@ -1344,7 +1345,7 @@ register_world "trial_completionist"
         end
     end,
     on_stats = function( player, win )
-        world.award_medals( player, win, { "visit", "time", "turns" }  )
+        world.award_medals( player, win, { "visit", "time", "turns", "anomaly" }  )
     end,
     on_entity = function( entity )
         world.on_entity( entity )
