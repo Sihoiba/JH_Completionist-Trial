@@ -1,6 +1,6 @@
 nova.require "data/lua/jh/data/generator"
 nova.require "data/lua/jh/data/levels/europa/europa_refueling"
-nova.require "completionist_levels/europa_items_overrides"
+nova.require "e"
 
 register_blueprint "level_europa_refueling_completionist"
 {

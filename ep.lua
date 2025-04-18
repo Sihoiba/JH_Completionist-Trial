@@ -1,6 +1,6 @@
 nova.require "data/lua/jh/data/generator"
 nova.require "data/lua/jh/data/levels/europa/europa_pit"
-nova.require "completionist_levels/europa_items_overrides"
+nova.require "e"
 
 europa_pit_completionist = {}
 

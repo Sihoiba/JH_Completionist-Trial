@@ -1,8 +1,8 @@
 nova.require "data/lua/jh/data/generator"
 nova.require "data/lua/jh/data/levels/callisto/rift/rift_tilesets"
 nova.require "data/lua/jh/data/levels/callisto/rift/rift_crevice"
-nova.require "completionist_levels/rift_crevice_overrides"
-nova.require "completionist_levels/rift_common_overrides"
+nova.require "rc"
+nova.require "rco"
 
 register_blueprint "level_callisto_rift_completionist"
 {
