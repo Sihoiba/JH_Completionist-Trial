@@ -48,6 +48,7 @@ register_blueprint "runtime_completionist"
         on_enter_level = [[
             function ( self, player, reenter )
                 nova.log("Level: "..world:get_level().text.name.." level number "..tostring(world.data.current).." depth: "..tostring(world:get_level().level_info.depth).." reenter "..tostring(reenter))
+                nova.log("kills total, kills max "..tostring(player.statistics.data.kills_total())..","..tostring(player.statistics.data.kills_max()))
 
                 if world.data.current == 93 then
                     world:mark_destroy(generator.find_entity_id( world:get_level(), "cot_exit_n" ))
@@ -192,7 +193,7 @@ register_blueprint "badge_completionist4"
 {
     text = {
         name  = "Completionist Platinum Badge",
-        desc  = "Complete Completionist Trial on N!+ & clear all special levels & 100% kills",
+        desc  = "Complete Completionist Trial on N!+ & clear all special levels & 99.99% kills",
     },
     badge = {
         group = "trial_completionist",
@@ -204,7 +205,7 @@ register_blueprint "badge_completionist5"
 {
     text = {
         name  = "Completionist Diamond Badge",
-        desc  = "Complete Completionist Trial on I! & clear all special levels & 100% kills",
+        desc  = "Complete Completionist Trial on I! & clear all special levels & 99.99% kills",
     },
     badge = {
         group = "trial_completionist",
@@ -245,7 +246,7 @@ register_blueprint "trial_completionist"
                         world.award_badge( player, "badge_completionist2" )
                         if DIFFICULTY > 2 and completed == 21 then
                             world.award_badge( player, "badge_completionist3" )
-                            if DIFFICULTY > 3 and ( player.statistics.data.kills_total() or 0 ) >= player.statistics.data.kills_max() then
+                            if DIFFICULTY > 3 and ( player.statistics.data.kills_total() or 0 ) >= (player.statistics.data.kills_max() - 3) then
                                 world.award_badge( player, "badge_completionist4" )
                                 if DIFFICULTY > 5 then
                                     world.award_badge( player, "badge_completionist5" )
