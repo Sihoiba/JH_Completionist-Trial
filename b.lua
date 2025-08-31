@@ -168,7 +168,7 @@ register_blueprint "level_beyond_percipice_completionist"
         ]],
         on_kill = [[
             function ( self, killed, killer, all )
-                if self.attributes.portal == 0 and killed.data.boss then
+                if self.attributes.portal == 0 and killed and killed.data and killed.data.boss then
                     local e = self:place_entity( "portal_01", self:find_coord( "portal_off" ) )
                     ui:spawn_fx( nil, "fx_summon_exalted", nil, world:get_position( e ) )
                     self.attributes.summoner_dead = true
