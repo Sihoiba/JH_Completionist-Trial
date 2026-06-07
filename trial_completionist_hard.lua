@@ -10,11 +10,11 @@ nova.require "completionist_common"
 register_blueprint "badge_completionist1"
 {
     text = {
-        name  = "Completionist Bronze Badge",
-        desc  = "Complete completionist",
+        name  = "Completionist Brutal Bronze Badge",
+        desc  = "Complete brutal completionist",
     },
     badge = {
-        group = "trial_completionist",
+        group = "trial_completionist_hard",
         level = 1,
     },
 }
@@ -23,10 +23,10 @@ register_blueprint "badge_completionist2"
 {
     text = {
         name  = "Completionist Silver Badge",
-        desc  = "Complete Completionist on Hard+",
+        desc  = "Complete brutal Completionist on Hard+",
     },
     badge = {
-        group = "trial_completionist",
+        group = "trial_completionist_hard",
         level = 2,
     },
 }
@@ -35,10 +35,10 @@ register_blueprint "badge_completionist3"
 {
     text = {
         name  = "Completionist Gold Badge",
-        desc  = "Complete Completionist on UV+ & clear all special levels",
+        desc  = "Complete brutal Completionist on UV+ & clear all special levels",
     },
     badge = {
-        group = "trial_completionist",
+        group = "trial_completionist_hard",
         level = 3,
     },
 }
@@ -47,10 +47,10 @@ register_blueprint "badge_completionist4"
 {
     text = {
         name  = "Completionist Platinum Badge",
-        desc  = "Complete Completionist Trial on N!+ & clear all special levels & 99.99% kills",
+        desc  = "Complete brutal Completionist Trial on N!+ & clear all special levels & 99.99% kills",
     },
     badge = {
-        group = "trial_completionist",
+        group = "trial_completionist_hard",
         level = 4,
     },
 }
@@ -59,31 +59,31 @@ register_blueprint "badge_completionist5"
 {
     text = {
         name  = "Completionist Diamond Badge",
-        desc  = "Complete Completionist Trial on I! & clear all special levels & 99.99% kills",
+        desc  = "Complete brutal Completionist Trial on I! & clear all special levels & 99.99% kills",
     },
     badge = {
-        group = "trial_completionist",
+        group = "trial_completionist_hard",
         level = 5,
     },
 }
 
-register_blueprint "trial_completionist"
+register_blueprint "trial_completionist_hard"
 {
     text = {
-        name        = "Completionist",
-        desc        = "{!COMPLETIONIST MOD}\nYou not going to rest until have seen every last part of every single base accross Jupiter and its moons.\n\nVisit every single floor, every branch (all four!) and every special level (every single one!) on every moon. Normal elevators are locked if a branch exit exists. Callisto, Europa and IO each have an extra floor to fit everything in. Purgatory is visitable but not explorable.",
+        name        = "Brutal Completionist",
+        desc        = "{!COMPLETIONIST MOD - BRUTAL}\nYou not going to rest until have seen every last part of every single base accross Jupiter and its moons, but make it brutal.\n\nVisit every single floor, every branch (all four!) and every special level (every single one!) on every moon. Normal elevators are locked if a branch exit exists. Callisto, Europa and IO each have an extra floor to fit everything in. Purgatory is visitable but not explorable.\n{!You only get XP for kills on the main branch levels, not the side branch levels or special levels!}",
         abbr        = "Comp",
-        mortem_line = "He wanted to see everything!"
+        mortem_line = "He wanted to see everything, and he wanted it brutal!"
     },
     challenge = {
         type  = "trial",
-        group = "trial_completionist",
+        group = "trial_completionist_hard",
         score = true,
     },
     callbacks = {
         on_create_player = [[
             function( self, player )
-                -- player:attach( "runtime_murder" )
+                --player:attach( "runtime_murder" )
                 player:attach( "runtime_completionist" )
                 player:attach( "keycard_red", { stack = { amount = 3 } } )
             end
@@ -114,7 +114,7 @@ register_blueprint "trial_completionist"
     },
 }
 
-register_world "trial_completionist"
+register_world "trial_completionist_hard"
 {
     on_create = function( seed )
         local data = world.setup( seed )
@@ -1204,42 +1204,45 @@ register_world "trial_completionist"
     end,
     on_entity = function( entity )
         world.on_entity( entity )
-        if entity.data and entity.data.ai and entity.attributes and
-                ( not entity.data.is_player ) and entity.attributes.health and
-                ( not entity.data.boss ) and string.sub( world:get_id( entity ), 1, 7 ) ~= "exalted" and
+        if entity.data and entity.data.ai and entity.attributes and ( not entity.data.is_player ) and entity.attributes.health then
+            if world.data.current > 33 then
+                entity.attributes.experience_value = 0
+            end
+            if ( not entity.data.boss ) and string.sub( world:get_id( entity ), 1, 7 ) ~= "exalted" and
                 DIFFICULTY > 5 then
-            local linfo = world.data.level[ world.data.current ]
-            if linfo then
-                local dlevel = linfo.dlevel or 1
-                local ep     = linfo.episode or 1
-                if ep > 3 and math.random( 100 ) < ( 20 + dlevel * 5 ) then
-                    local count = ep - 3
-                    local exalted_traits = {
-                        { "exalted_kw_tough",                tag = "health", },
-                        { "exalted_kw_accurate", },
-                        { "exalted_kw_lethal",               tag = "damage", },
-                        { "exalted_kw_resist",               tag = "resist", },
-                        { "exalted_kw_corrosive",  min = 3,  tag = "resist", },
-                        { "exalted_kw_mephitic",   min = 5,  tag = "resist", },
-                        { "exalted_kw_infernal",   min = 8,  tag = "resist", },
-                        { "exalted_kw_hunter",     min = 3, },
-                        { "exalted_kw_fast",       min = 5, },
-                        { "exalted_kw_resilient",  min = 8,  tag = "health", },
-                        { "exalted_kw_adaptive",   min = 8,  tag = "block",  },
-                        { "exalted_kw_damage_gate",min = 8,  tag = "block",  },
-                        { "exalted_kw_damage_gate",min = 8,  tag = "block",  },
-                        { "exalted_kw_beholder",   min = 8,  tag = "health", },
-                        { "exalted_kw_deadly",     min = 12, tag = "damage", },
-                        { "exalted_kw_regenerate", min = 12, tag = "health", },
-                    }
-                    if entity.data.nightmare and entity.data.nightmare.id then
-                        local nid = entity.data.nightmare.id
-                        if blueprints[nid] and blueprints[nid].data and blueprints[nid].data.exalted_traits then
-                            exalted_traits = blueprints[nid].data.exalted_traits
+                local linfo = world.data.level[ world.data.current ]
+                if linfo then
+                    local dlevel = linfo.dlevel or 1
+                    local ep     = linfo.episode or 1
+                    if ep > 3 and math.random( 100 ) < ( 20 + dlevel * 5 ) then
+                        local count = ep - 3
+                        local exalted_traits = {
+                            { "exalted_kw_tough",                tag = "health", },
+                            { "exalted_kw_accurate", },
+                            { "exalted_kw_lethal",               tag = "damage", },
+                            { "exalted_kw_resist",               tag = "resist", },
+                            { "exalted_kw_corrosive",  min = 3,  tag = "resist", },
+                            { "exalted_kw_mephitic",   min = 5,  tag = "resist", },
+                            { "exalted_kw_infernal",   min = 8,  tag = "resist", },
+                            { "exalted_kw_hunter",     min = 3, },
+                            { "exalted_kw_fast",       min = 5, },
+                            { "exalted_kw_resilient",  min = 8,  tag = "health", },
+                            { "exalted_kw_adaptive",   min = 8,  tag = "block",  },
+                            { "exalted_kw_damage_gate",min = 8,  tag = "block",  },
+                            { "exalted_kw_damage_gate",min = 8,  tag = "block",  },
+                            { "exalted_kw_beholder",   min = 8,  tag = "health", },
+                            { "exalted_kw_deadly",     min = 12, tag = "damage", },
+                            { "exalted_kw_regenerate", min = 12, tag = "health", },
+                        }
+                        if entity.data.nightmare and entity.data.nightmare.id then
+                            local nid = entity.data.nightmare.id
+                            if blueprints[nid] and blueprints[nid].data and blueprints[nid].data.exalted_traits then
+                                exalted_traits = blueprints[nid].data.exalted_traits
+                            end
                         end
-                    end
 
-                    make_exalted( entity, dlevel, exalted_traits, { count = count, } )
+                        make_exalted( entity, dlevel, exalted_traits, { count = count, } )
+                    end
                 end
             end
         end
