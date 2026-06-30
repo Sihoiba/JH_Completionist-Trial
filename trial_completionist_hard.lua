@@ -7,7 +7,7 @@ nova.require "completionist_levels/europa_pit_overrides"
 nova.require "completionist_levels/europa_refueling_overrides"
 nova.require "completionist_common"
 
-register_blueprint "badge_completionist1"
+register_blueprint "badge_completionist_hard1"
 {
     text = {
         name  = "Completionist Brutal Bronze Badge",
@@ -19,7 +19,7 @@ register_blueprint "badge_completionist1"
     },
 }
 
-register_blueprint "badge_completionist2"
+register_blueprint "badge_completionist_hard2"
 {
     text = {
         name  = "Completionist Silver Badge",
@@ -31,7 +31,7 @@ register_blueprint "badge_completionist2"
     },
 }
 
-register_blueprint "badge_completionist3"
+register_blueprint "badge_completionist_hard3"
 {
     text = {
         name  = "Completionist Gold Badge",
@@ -43,7 +43,7 @@ register_blueprint "badge_completionist3"
     },
 }
 
-register_blueprint "badge_completionist4"
+register_blueprint "badge_completionist_hard4"
 {
     text = {
         name  = "Completionist Platinum Badge",
@@ -55,7 +55,7 @@ register_blueprint "badge_completionist4"
     },
 }
 
-register_blueprint "badge_completionist5"
+register_blueprint "badge_completionist_hard5"
 {
     text = {
         name  = "Completionist Diamond Badge",
@@ -71,7 +71,7 @@ register_blueprint "trial_completionist_hard"
 {
     text = {
         name        = "Brutal Completionist",
-        desc        = "{!COMPLETIONIST MOD - BRUTAL}\nYou not going to rest until have seen every last part of every single base accross Jupiter and its moons, but make it brutal.\n\nVisit every single floor, every branch (all four!) and every special level (every single one!) on every moon. Normal elevators are locked if a branch exit exists. Callisto, Europa and IO each have an extra floor to fit everything in. Purgatory is visitable but not explorable.\n{!You only get XP for kills on the main branch levels, not the side branch levels or special levels!}",
+        desc        = "{!COMPLETIONIST MOD - BRUTAL}\nYou not going to rest until have seen every last part of every single base accross Jupiter and its moons, but make it brutal.\n\nVisit every single floor, every branch (all four!) and every special level (every single one!) on every moon. Same level rules as completionist.\n{!You only get XP for kills on the main branch levels, not the side branch levels or special levels!}",
         abbr        = "Comp",
         mortem_line = "He wanted to see everything, and he wanted it brutal!"
     },
@@ -95,15 +95,15 @@ register_blueprint "trial_completionist_hard"
                 nova.log("specials visited, specials completed "..tostring(stats.data.special_levels.visited())..","..tostring(stats.data.special_levels.completed()))
                 nova.log("kills total, kills max "..tostring(player.statistics.data.kills_total())..","..tostring(player.statistics.data.kills_max()))
                 if win then
-                    world.award_badge( player, "badge_completionist1" )
+                    world.award_badge( player, "badge_completionist_hard1" )
                     if DIFFICULTY > 1 then
-                        world.award_badge( player, "badge_completionist2" )
+                        world.award_badge( player, "badge_completionist_hard2" )
                         if DIFFICULTY > 2 and completed == 21 then
-                            world.award_badge( player, "badge_completionist3" )
+                            world.award_badge( player, "badge_completionist_hard3" )
                             if DIFFICULTY > 3 and ( player.statistics.data.kills_total() or 0 ) >= (player.statistics.data.kills_max() - 3) then
-                                world.award_badge( player, "badge_completionist4" )
+                                world.award_badge( player, "badge_completionist_hard4" )
                                 if DIFFICULTY > 5 then
-                                    world.award_badge( player, "badge_completionist5" )
+                                    world.award_badge( player, "badge_completionist_hard5" )
                                 end
                             end
                         end
